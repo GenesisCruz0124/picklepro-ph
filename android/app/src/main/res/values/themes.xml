@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Pre-Compose window theme (splash/launch background) only; all actual
+         theming is Compose Material3 in core/designsystem/Theme.kt. -->
+    <style name="Theme.PicklePro" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/pickle_green</item>
+        <item name="android:statusBarColor">@color/pickle_green</item>
+    </style>
+</resources>

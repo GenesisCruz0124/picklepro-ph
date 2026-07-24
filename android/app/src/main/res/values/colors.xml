@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Referenced directly by the adaptive launcher icon; Compose theme colors
+         live in core/designsystem/Color.kt and are the source of truth for UI. -->
+    <color name="pickle_green">#2E7D32</color>
+</resources>

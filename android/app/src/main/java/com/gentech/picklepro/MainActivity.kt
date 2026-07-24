@@ -1,0 +1,20 @@
+package com.gentech.picklepro
+
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import com.gentech.picklepro.core.designsystem.PickleProTheme
+import com.gentech.picklepro.core.navigation.PickleProNavHost
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            PickleProTheme {
+                PickleProNavHost()
+            }
+        }
+    }
+}
