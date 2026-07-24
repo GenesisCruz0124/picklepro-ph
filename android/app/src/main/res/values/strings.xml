@@ -192,4 +192,26 @@
     <string name="bracket_standings_losses">L</string>
     <string name="bracket_standings_point_diff">+/-</string>
     <string name="bracket_view_button">Tingnan ang Bracket</string>
+
+    <!-- Live Scorer -->
+    <string name="scorer_side_out_button">SIDE OUT</string>
+    <string name="scorer_undo_button">UNDO</string>
+    <string name="scorer_timeout_button">Timeout</string>
+    <string name="scorer_timeout_countdown">Timeout — %1$d s</string>
+    <string name="scorer_end_swap_reminder">Oras na para magpalit ng gilid!</string>
+    <string name="scorer_game_point">Game Point</string>
+    <string name="scorer_match_point">Match Point</string>
+    <string name="scorer_match_complete_title">Tapos na ang Match!</string>
+    <string name="scorer_match_complete_message">Panalo si %1$s!</string>
+    <string name="scorer_ok_button">OK</string>
+    <string name="scorer_court_right">Kanan</string>
+    <string name="scorer_court_left">Kaliwa</string>
+    <string name="scorer_game_label">Game %1$d</string>
+    <string name="scorer_open_scoreboard_button">Buksan ang Scoreboard</string>
+
+    <string name="match_status_pending">Hindi Pa Nilalaro</string>
+    <string name="match_status_live">Live Ngayon</string>
+    <string name="match_status_done">Tapos Na</string>
+    <string name="match_status_walkover">Walkover</string>
+    <string name="bracket_match_not_ready">Hintayin muna ang mga naunang laban</string>
 </resources>

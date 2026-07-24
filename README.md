@@ -6,7 +6,7 @@ Pickleball tournament management platform for the Philippine market.
 
 | Surface | Platform | Status |
 |---|---|---|
-| PicklePro PH app (players + organizers) | Android — Kotlin, Jetpack Compose, MVVM | **M4 ✅** (auth, profile, QR, organizer activation, tournament/division setup, registration, brackets); M5+ pending |
+| PicklePro PH app (players + organizers) | Android — Kotlin, Jetpack Compose, MVVM | **M5 ✅** (auth, profile, QR, organizer activation, tournament/division setup, registration, brackets, live scorer, scoreboard, offline sync); M6+ pending |
 | PicklePro PH Admin | Web — Vite + React + TS + Tailwind (Vercel) | M7 (pending) |
 | Backend | Supabase — Auth, Postgres + RLS, Storage, Edge Functions | **M1 ✅** |
 
@@ -24,11 +24,14 @@ supabase/
     claim-shell-profile     claim a manually-added shell player
 android/    Kotlin/Jetpack Compose app (Gradle project)
   app/src/main/java/com/gentech/picklepro/
-    core/        design system, Taglish strings, QR encode/decode, rating tiers, nav
+    core/        design system, Taglish strings, QR encode/decode, rating tiers,
+                 scoring engine, nav
     auth/        signup + login (screens, ViewModel)
     player/      profile, my QR (screens, ViewModels)
-    organizer/   activation, wallet, dashboard, tournament + division setup
-    data/        Room cache, Supabase client + DTOs, repositories, DataStore
+    organizer/   activation, wallet, dashboard, tournament + division setup,
+                 registration, brackets, live scorer, scoreboard
+    data/        Room cache (incl. offline-first match_cache + pending_ops),
+                 Supabase client + DTOs, repositories, sync (WorkManager), DataStore
 ```
 
 ## Backend (M1)
@@ -47,7 +50,7 @@ Key backend rules:
 - **Monetization** — activation codes: Generated → Sent → Redeemed (binds to organizer) → consumed by one tournament. Redemption/consumption only via Edge Functions.
 - **RLS** — profiles/ratings readable by all authenticated users (transparency); tournament family owned by its organizer; players read once a tournament leaves draft; admin-only tables for codes and sandbag flags.
 
-## Android app (M2–M4)
+## Android app (M2–M5)
 
 ```sh
 cd android
@@ -55,15 +58,18 @@ cp local.properties.example local.properties   # fill in SUPABASE_URL / SUPABASE
 ./gradlew assembleDebug
 ```
 
-> **No Android SDK in this build environment.** The M2–M4 source and Gradle
+> **No Android SDK in this build environment.** The M2–M5 source and Gradle
 > config were written and reviewed carefully (package/path consistency,
 > string-resource references, and version-catalog wiring were all checked),
 > but could not be compiled here — do a real build to catch any API-level
-> mismatches (Supabase-kt, Vico, CameraX, ML Kit) before shipping. The
-> bracket/round-robin generation algorithms (pure Kotlin, no Android
-> dependency) *were* independently verified by porting them to Python and
-> testing — see `prompts/2026-07-24-m4-registration-brackets.md` for what
-> that caught. See also
+> mismatches (Supabase-kt, Vico, CameraX, ML Kit, WorkManager) before
+> shipping. Every algorithm with no Android dependency (bracket/round-robin
+> generation, the point-by-point scoring engine) *was* independently
+> verified by porting it to Python and testing — see
+> `prompts/2026-07-24-m4-registration-brackets.md` and
+> `prompts/2026-07-24-m5-live-scorer-scoreboard-offline-sync.md` for what
+> that caught, including a real bracket-advancement bug found while
+> building M5. See also
 > `prompts/2026-07-24-m2-android-scaffold-auth-profile-qr.md` and
 > `prompts/2026-07-24-m3-organizer-activation-tournament-division-setup.md`.
 
@@ -92,6 +98,19 @@ blocked once any match has a result. Full offline-first sync (Room +
 `pending_ops` + WorkManager) is deliberately deferred to M5, per the
 milestone table's own pairing of "offline sync" with the live scorer.
 
+**M5** — Live Scorer: event-sourced side-out scoring (doubles 3-number
+call, 0-0-2 start, server 1→2→side-out; singles 2-number, immediate
+side-out) and rally scoring, win-by-2, best-of-N, game/match point
+indicators, end-swap reminder, unbounded UNDO (drop-and-replay, not an
+inverse-op stack), 2/team/game timeouts with a 60s countdown. Room
+(`match_cache`) is the source of truth while scoring — every action
+enqueues a `pending_ops` row that a WorkManager `SyncWorker` flushes to
+Supabase when online (organizer-device-wins: unconditional upsert, never
+a merge), then triggers `process-match-result` for Elo. Bracket
+advancement (winner into the next round's slot) runs as a sync follow-up
+too, since the target match may not be cached on this device yet.
+Scoreboard Display: fullscreen landscape, keep-screen-on, read-only.
+
 ## Phase 1 milestones (spec §10)
 
 | # | Milestone | Status |
@@ -100,7 +119,7 @@ milestone table's own pairing of "offline sync" with the live scorer.
 | M2 | Android scaffold + auth + player profile + QR | ✅ |
 | M3 | Organizer activation + tournament/division setup | ✅ |
 | M4 | Registration (QR scan + manual) + brackets (SE + RR) | ✅ |
-| M5 | Live scorer (side-out + rally) + scoreboard + offline sync | — |
+| M5 | Live scorer (side-out + rally) + scoreboard + offline sync | ✅ |
 | M6 | Tabulation + Elo processing + certificates | — |
 | M7 | Admin web (codes, organizers, flags, DUPR verify) | — |
 | M8 | Polish + Taglish pass + release `PickleProPH-v1.0.0.apk` | — |

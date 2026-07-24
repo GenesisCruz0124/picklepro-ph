@@ -78,10 +78,15 @@ class BracketRepository(context: Context) {
             if (a != null && b != null) {
                 inserts += MatchInsertDto(divisionId, round = 1, position = pos, sideARef = a, sideBRef = b)
                 feed.add(null)
-                pos++
             } else {
                 feed.add(a ?: b) // bye: the real entrant advances immediately, no round-1 match
             }
+            // pos advances for every pairing, byes included, so it always equals the pairing
+            // index — the same index `feed` uses. That's what lets bracket advancement (spec
+            // §5.6, wired up when a match completes) derive "round R position P feeds round
+            // R+1 position P/2, side A if P even else B" with pure arithmetic. Round 2+ never
+            // skip a position (every pairing there is a real match), so this only matters here.
+            pos++
             i += 2
         }
 

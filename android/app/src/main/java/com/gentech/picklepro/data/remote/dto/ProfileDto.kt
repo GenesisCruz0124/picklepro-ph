@@ -19,14 +19,6 @@ data class ProfileDto(
     @SerialName("is_shell") val isShell: Boolean = false,
 )
 
-/** Partial update payload — only fields the player can self-edit. */
-@Serializable
-data class ProfileUpdateDto(
-    val name: String? = null,
-    @SerialName("photo_url") val photoUrl: String? = null,
-    val location: String? = null,
-)
-
 /** Manual-add shell player insert (spec §5.4) — RLS requires is_shell = true from an organizer. */
 @Serializable
 data class ShellProfileInsertDto(

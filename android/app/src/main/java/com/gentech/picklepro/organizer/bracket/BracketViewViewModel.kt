@@ -53,21 +53,23 @@ class BracketViewViewModel(
             val entrants = division?.let { resolveEntrants(it, registrations, teams) } ?: emptyList()
             val nameByRef = entrants.associate { it.ref to it.name }
 
-            if (division?.format == "round_robin") {
-                val standings = runCatching { bracketRepository.computeStandings(divisionId, entrants) }.getOrDefault(emptyList())
-                _uiState.update {
-                    it.copy(division = division, standings = standings, nameByRef = nameByRef, isLoading = false)
-                }
+            // Both formats show the match list (round robin needs it too — that's the only way
+            // to reach an individual match to score, standings are read-only) — round robin
+            // additionally gets the standings table.
+            val matches = runCatching { bracketRepository.listMatches(divisionId) }.getOrDefault(emptyList())
+            val standings = if (division?.format == "round_robin") {
+                runCatching { bracketRepository.computeStandings(divisionId, entrants) }.getOrDefault(emptyList())
             } else {
-                val matches = runCatching { bracketRepository.listMatches(divisionId) }.getOrDefault(emptyList())
-                _uiState.update {
-                    it.copy(
-                        division = division,
-                        matchesByRound = matches.groupBy { m -> m.round },
-                        nameByRef = nameByRef,
-                        isLoading = false,
-                    )
-                }
+                emptyList()
+            }
+            _uiState.update {
+                it.copy(
+                    division = division,
+                    matchesByRound = matches.groupBy { m -> m.round },
+                    standings = standings,
+                    nameByRef = nameByRef,
+                    isLoading = false,
+                )
             }
         }
     }

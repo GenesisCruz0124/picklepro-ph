@@ -62,6 +62,12 @@ import com.gentech.picklepro.organizer.registration.QrScanViewModelFactory
 import com.gentech.picklepro.organizer.registration.RegistrationListScreen
 import com.gentech.picklepro.organizer.registration.RegistrationListViewModel
 import com.gentech.picklepro.organizer.registration.RegistrationListViewModelFactory
+import com.gentech.picklepro.organizer.scorer.LiveScorerScreen
+import com.gentech.picklepro.organizer.scorer.LiveScorerViewModel
+import com.gentech.picklepro.organizer.scorer.LiveScorerViewModelFactory
+import com.gentech.picklepro.organizer.scoreboard.ScoreboardScreen
+import com.gentech.picklepro.organizer.scoreboard.ScoreboardViewModel
+import com.gentech.picklepro.organizer.scoreboard.ScoreboardViewModelFactory
 import com.gentech.picklepro.organizer.tournament.NewTournamentScreen
 import com.gentech.picklepro.organizer.tournament.NewTournamentViewModel
 import com.gentech.picklepro.organizer.tournament.NewTournamentViewModelFactory
@@ -82,6 +88,11 @@ private object Routes {
     const val AUTH = "auth"
     const val HOME = "home"
     const val BECOME_ORGANIZER = "become-organizer"
+    const val MATCH_SCORE_PATTERN = "match/{matchId}/score"
+    const val MATCH_SCOREBOARD_PATTERN = "match/{matchId}/scoreboard"
+
+    fun matchScore(id: String) = "match/$id/score"
+    fun matchScoreboard(id: String) = "match/$id/scoreboard"
 }
 
 private enum class HomeTab(val route: String) {
@@ -148,17 +159,46 @@ fun PickleProNavHost() {
             HomeScaffold(
                 appContext = appContext,
                 onBecomeOrganizerClick = { navController.navigate(Routes.BECOME_ORGANIZER) },
+                onOpenMatchScore = { matchId -> navController.navigate(Routes.matchScore(matchId)) },
             )
         }
         composable(Routes.BECOME_ORGANIZER) {
             val viewModel: BecomeOrganizerViewModel = viewModel(factory = BecomeOrganizerViewModelFactory(appContext))
             BecomeOrganizerScreen(viewModel = viewModel, onRedeemed = { navController.popBackStack() })
         }
+
+        // Top-level, not nested under HomeScaffold's Scaffold: the scoreboard is spec'd as a
+        // true fullscreen display (spec §5.7), and the live scorer benefits from the same
+        // freedom from bottom-nav chrome while a match is in progress.
+        composable(
+            Routes.MATCH_SCORE_PATTERN,
+            arguments = listOf(navArgument("matchId") { type = NavType.StringType }),
+        ) { backStackEntry ->
+            val matchId = backStackEntry.arguments?.getString("matchId").orEmpty()
+            val viewModel: LiveScorerViewModel = viewModel(factory = LiveScorerViewModelFactory(appContext, matchId))
+            LiveScorerScreen(
+                viewModel = viewModel,
+                onOpenScoreboard = { navController.navigate(Routes.matchScoreboard(matchId)) },
+                onOpenBracket = { navController.popBackStack() },
+            )
+        }
+        composable(
+            Routes.MATCH_SCOREBOARD_PATTERN,
+            arguments = listOf(navArgument("matchId") { type = NavType.StringType }),
+        ) { backStackEntry ->
+            val matchId = backStackEntry.arguments?.getString("matchId").orEmpty()
+            val viewModel: ScoreboardViewModel = viewModel(factory = ScoreboardViewModelFactory(appContext, matchId))
+            ScoreboardScreen(viewModel = viewModel)
+        }
     }
 }
 
 @Composable
-private fun HomeScaffold(appContext: Context, onBecomeOrganizerClick: () -> Unit) {
+private fun HomeScaffold(
+    appContext: Context,
+    onBecomeOrganizerClick: () -> Unit,
+    onOpenMatchScore: (matchId: String) -> Unit,
+) {
     val tabNavController = rememberNavController()
     val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory(appContext))
     val isOrganizer by homeViewModel.isOrganizer.collectAsState()
@@ -334,7 +374,7 @@ private fun HomeScaffold(appContext: Context, onBecomeOrganizerClick: () -> Unit
                     val viewModel: BracketViewViewModel = viewModel(
                         factory = BracketViewViewModelFactory(appContext, divisionId),
                     )
-                    BracketViewScreen(viewModel = viewModel)
+                    BracketViewScreen(viewModel = viewModel, onOpenMatch = onOpenMatchScore)
                 }
             }
         }

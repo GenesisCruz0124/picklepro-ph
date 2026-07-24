@@ -90,3 +90,18 @@ directly:
   correctly get one bye per round).
 - **Standings tiebreakers**: sanity-checked the win/loss tally and point
   differential arithmetic against hand-computed expected values.
+
+### Addendum (found while building M5's bracket advancement)
+
+Round-1 match `position` values only incremented for *real* matches,
+skipping bye pairings — round 2+ positions didn't have this gap (every
+pairing there is a real match). That meant "round R position P feeds round
+R+1 position P/2, side A if P even else B" — the natural arithmetic for
+bracket advancement — only held for R ≥ 2; the round1→round2 edge was
+silently wrong whenever a division had byes. Fixed by incrementing
+`position` for every round-1 pairing, byes included, so it always equals
+the pairing index `feed` already uses. Re-verified against entrant counts
+2–32 with an added check specifically for this: every match's derived
+advancement target (`round+1`, `position/2`, side by parity) is a real
+slot that exists in the next round. All the original M4 invariants (unique
+`(round, position)` keys, correct bye counts) still hold.

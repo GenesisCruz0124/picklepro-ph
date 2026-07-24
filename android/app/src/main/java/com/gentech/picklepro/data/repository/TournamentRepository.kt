@@ -5,6 +5,7 @@ import com.gentech.picklepro.data.remote.SupabaseModule
 import com.gentech.picklepro.data.remote.dto.CreateTournamentRequest
 import com.gentech.picklepro.data.remote.dto.CreateTournamentResponse
 import com.gentech.picklepro.data.remote.dto.TournamentDto
+import com.gentech.picklepro.data.remote.dto.TournamentLogoUpdateDto
 import com.gentech.picklepro.data.remote.dto.TournamentStatusUpdateDto
 import com.gentech.picklepro.data.remote.dto.TournamentUpdateDto
 import io.github.jan.supabase.functions.functions
@@ -53,10 +54,13 @@ class TournamentRepository(context: Context) {
             .update(TournamentStatusUpdateDto(newStatus)) { filter { eq("id", tournamentId) } }
     }
 
-    /** Uploads the logo and returns its public URL, ready to persist via [update]. */
+    /** Uploads the logo, persists its public URL, and returns it. */
     suspend fun uploadLogo(tournamentId: String, bytes: ByteArray, fileExtension: String): String {
         val path = "$tournamentId/logo.$fileExtension"
         client.storage.from(LOGO_BUCKET).upload(path, bytes) { upsert = true }
-        return client.storage.from(LOGO_BUCKET).publicUrl(path)
+        val url = client.storage.from(LOGO_BUCKET).publicUrl(path)
+        client.postgrest.from(TABLE)
+            .update(TournamentLogoUpdateDto(url)) { filter { eq("id", tournamentId) } }
+        return url
     }
 }

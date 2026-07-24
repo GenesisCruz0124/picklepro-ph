@@ -114,8 +114,7 @@ class TournamentDetailViewModel(
         viewModelScope.launch {
             _uiState.update { it.copy(isUploadingLogo = true, errorMessage = null) }
             try {
-                val url = tournamentRepository.uploadLogo(tournamentId, bytes, fileExtension)
-                tournamentRepository.update(tournamentId, TournamentUpdateDto(logoUrl = url))
+                tournamentRepository.uploadLogo(tournamentId, bytes, fileExtension)
                 refresh()
             } catch (t: Throwable) {
                 _uiState.update { it.copy(errorMessage = "Hindi na-upload ang logo.") }

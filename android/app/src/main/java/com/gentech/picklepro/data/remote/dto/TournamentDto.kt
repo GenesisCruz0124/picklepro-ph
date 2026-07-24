@@ -36,6 +36,12 @@ data class TournamentUpdateDto(
 @Serializable
 data class TournamentStatusUpdateDto(val status: String)
 
+// A single-field DTO, not TournamentUpdateDto with only logoUrl set — every other
+// field on TournamentUpdateDto defaults to null, and a serialized null PATCHes that
+// column to null too, wiping the tournament's name/venue/description/dates.
+@Serializable
+data class TournamentLogoUpdateDto(@SerialName("logo_url") val logoUrl: String)
+
 /** Body for the consume-code-on-create Edge Function (spec §5.1, §5.3). */
 @Serializable
 data class CreateTournamentRequest(

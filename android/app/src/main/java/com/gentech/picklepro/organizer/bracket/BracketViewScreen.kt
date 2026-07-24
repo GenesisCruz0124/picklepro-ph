@@ -25,7 +25,10 @@ import com.gentech.picklepro.data.remote.dto.BracketMatchDto
 import com.gentech.picklepro.data.repository.StandingsRow
 
 @Composable
-fun BracketViewScreen(viewModel: BracketViewViewModel) {
+fun BracketViewScreen(
+    viewModel: BracketViewViewModel,
+    onOpenMatch: (matchId: String) -> Unit,
+) {
     val state by viewModel.uiState.collectAsState()
 
     if (state.isLoading) {
@@ -43,27 +46,27 @@ fun BracketViewScreen(viewModel: BracketViewViewModel) {
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         item {
-            Text(
-                stringResource(if (isRoundRobin) R.string.bracket_standings_title else R.string.bracket_view_title),
-                style = MaterialTheme.typography.headlineMedium,
-            )
+            Text(stringResource(R.string.bracket_view_title), style = MaterialTheme.typography.headlineMedium)
+        }
+
+        state.matchesByRound.toSortedMap().forEach { (round, matches) ->
+            item {
+                Text(
+                    stringResource(R.string.bracket_round_label, round),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+            }
+            items(matches.sortedBy { it.position }, key = { it.id }) { match ->
+                BracketMatchRow(match, state.nameByRef, onClick = { onOpenMatch(match.id) })
+            }
         }
 
         if (isRoundRobin) {
+            item {
+                Text(stringResource(R.string.bracket_standings_title), style = MaterialTheme.typography.headlineMedium)
+            }
             items(state.standings, key = { it.entrantRef }) { row ->
                 StandingsRowView(row)
-            }
-        } else {
-            state.matchesByRound.toSortedMap().forEach { (round, matches) ->
-                item {
-                    Text(
-                        stringResource(R.string.bracket_round_label, round),
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                }
-                items(matches.sortedBy { it.position }, key = { it.id }) { match ->
-                    BracketMatchRow(match, state.nameByRef)
-                }
             }
         }
     }
@@ -91,13 +94,30 @@ private fun StandingsRowView(row: StandingsRow) {
 }
 
 @Composable
-private fun BracketMatchRow(match: BracketMatchDto, nameByRef: Map<String, String>) {
-    val nameA = match.sideARef?.let { nameByRef[it] } ?: stringResource(R.string.bracket_bye_label)
-    val nameB = match.sideBRef?.let { nameByRef[it] } ?: stringResource(R.string.bracket_bye_label)
-    Card(modifier = Modifier.fillMaxWidth()) {
+private fun BracketMatchRow(match: BracketMatchDto, nameByRef: Map<String, String>, onClick: () -> Unit) {
+    val bye = stringResource(R.string.bracket_bye_label)
+    val nameA = match.sideARef?.let { nameByRef[it] } ?: bye
+    val nameB = match.sideBRef?.let { nameByRef[it] } ?: bye
+    val ready = match.sideARef != null && match.sideBRef != null
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = if (ready) onClick else {},
+    ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Text("$nameA  vs  $nameB", style = MaterialTheme.typography.titleLarge)
-            Text(match.status, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                if (ready) stringResource(matchStatusLabelRes(match.status)) else stringResource(R.string.bracket_match_not_ready),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
+}
+
+private fun matchStatusLabelRes(status: String): Int = when (status) {
+    "live" -> R.string.match_status_live
+    "done" -> R.string.match_status_done
+    "walkover" -> R.string.match_status_walkover
+    else -> R.string.match_status_pending
 }
