@@ -142,6 +142,7 @@
     <string name="division_empty">Wala pang division. Magdagdag na.</string>
     <string name="division_manage_registrations">Mga Registrasyon</string>
     <string name="division_manage_bracket">Bracket</string>
+    <string name="division_manage_results">Resulta</string>
 
     <!-- Registration -->
     <string name="registration_qr_scan_title">I-scan ang QR</string>
@@ -214,4 +215,31 @@
     <string name="match_status_done">Tapos Na</string>
     <string name="match_status_walkover">Walkover</string>
     <string name="bracket_match_not_ready">Hintayin muna ang mga naunang laban</string>
+
+    <!-- Results / tabulation (spec §5.8) -->
+    <string name="results_title">Resulta</string>
+    <string name="results_champion">Champion</string>
+    <string name="results_runner_up">Runner-Up</string>
+    <string name="results_third_place">Third Place</string>
+    <string name="results_incomplete_note">May mga laban pa na hindi tapos — pansamantala pa ang resulta.</string>
+    <string name="results_publish_label">I-publish ang Resulta</string>
+    <string name="results_publish_hint">Kapag naka-publish, makikita na ng mga manlalaro ang resulta.</string>
+    <string name="results_no_matches">Wala pang bracket o laban sa division na ito.</string>
+    <string name="results_certificates_button">Mga Certificate</string>
+
+    <!-- Certificates (spec §5.9) -->
+    <string name="certificates_title">Mga Certificate</string>
+    <string name="certificates_hint">I-tap para i-generate at i-share ang PDF certificate.</string>
+    <string name="certificates_participation_section">Participation</string>
+    <string name="certificates_generating">Gine-generate…</string>
+    <string name="certificates_share_title">I-share ang Certificate</string>
+    <string name="certificates_error">Hindi na-generate ang certificate. Subukan ulit.</string>
+    <string name="certificate_kind_champion">CHAMPION</string>
+    <string name="certificate_kind_runner_up">RUNNER-UP</string>
+    <string name="certificate_kind_participation">CERTIFICATE OF PARTICIPATION</string>
+    <string name="certificate_awarded_to">Iginagawad kay</string>
+    <string name="certificate_organized_by">Inorganisa ni</string>
+
+    <!-- Sync status (spec §5.10) -->
+    <string name="sync_pending_ops">%1$d resulta ang hinihintay ma-sync — pending pa ang rating updates.</string>
 </resources>

@@ -35,6 +35,7 @@ fun DashboardScreen(
     onOpenWallet: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsState()
+    val pendingOpCount by viewModel.pendingOpCount.collectAsState()
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -50,6 +51,19 @@ fun DashboardScreen(
                 Text(stringResource(R.string.organizer_dashboard_title), style = MaterialTheme.typography.headlineMedium)
                 TextButton(onClick = onOpenWallet) {
                     Text(stringResource(R.string.organizer_wallet_title))
+                }
+            }
+        }
+
+        if (pendingOpCount > 0) {
+            item {
+                Card(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        stringResource(R.string.sync_pending_ops, pendingOpCount),
+                        modifier = Modifier.padding(12.dp),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.error,
+                    )
                 }
             }
         }

@@ -44,3 +44,7 @@ data class DivisionUpsertDto(
 
 @Serializable
 data class DivisionLockUpdateDto(val locked: Boolean)
+
+/** Results publish toggle (spec §5.8) — single-field on purpose, see TournamentLogoUpdateDto's note. */
+@Serializable
+data class DivisionPublishUpdateDto(val published: Boolean)

@@ -38,6 +38,7 @@ fun DivisionSetupScreen(
     viewModel: DivisionSetupViewModel,
     onOpenRegistrations: (divisionId: String) -> Unit,
     onOpenBracket: (divisionId: String, alreadyGenerated: Boolean) -> Unit,
+    onOpenResults: (divisionId: String) -> Unit,
 ) {
     val state by viewModel.uiState.collectAsState()
     val form = state.form
@@ -88,6 +89,7 @@ fun DivisionSetupScreen(
                     onDelete = { viewModel.deleteDivision(division.id) },
                     onManageRegistrations = { onOpenRegistrations(division.id) },
                     onManageBracket = { onOpenBracket(division.id, division.locked) },
+                    onManageResults = { onOpenResults(division.id) },
                 )
             }
         }
@@ -101,6 +103,7 @@ private fun DivisionRow(
     onDelete: () -> Unit,
     onManageRegistrations: () -> Unit,
     onManageBracket: () -> Unit,
+    onManageResults: () -> Unit,
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -120,6 +123,7 @@ private fun DivisionRow(
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TextButton(onClick = onManageRegistrations) { Text(stringResource(R.string.division_manage_registrations)) }
                 TextButton(onClick = onManageBracket) { Text(stringResource(R.string.division_manage_bracket)) }
+                TextButton(onClick = onManageResults) { Text(stringResource(R.string.division_manage_results)) }
             }
             if (division.locked) {
                 Text(

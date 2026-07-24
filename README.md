@@ -6,7 +6,7 @@ Pickleball tournament management platform for the Philippine market.
 
 | Surface | Platform | Status |
 |---|---|---|
-| PicklePro PH app (players + organizers) | Android — Kotlin, Jetpack Compose, MVVM | **M5 ✅** (auth, profile, QR, organizer activation, tournament/division setup, registration, brackets, live scorer, scoreboard, offline sync); M6+ pending |
+| PicklePro PH app (players + organizers) | Android — Kotlin, Jetpack Compose, MVVM | **M6 ✅** (full organizer + player Phase-1 feature set through results + certificates); M7 admin web pending |
 | PicklePro PH Admin | Web — Vite + React + TS + Tailwind (Vercel) | M7 (pending) |
 | Backend | Supabase — Auth, Postgres + RLS, Storage, Edge Functions | **M1 ✅** |
 
@@ -29,7 +29,8 @@ android/    Kotlin/Jetpack Compose app (Gradle project)
     auth/        signup + login (screens, ViewModel)
     player/      profile, my QR (screens, ViewModels)
     organizer/   activation, wallet, dashboard, tournament + division setup,
-                 registration, brackets, live scorer, scoreboard
+                 registration, brackets, live scorer, scoreboard, results,
+                 certificates
     data/        Room cache (incl. offline-first match_cache + pending_ops),
                  Supabase client + DTOs, repositories, sync (WorkManager), DataStore
 ```
@@ -50,7 +51,7 @@ Key backend rules:
 - **Monetization** — activation codes: Generated → Sent → Redeemed (binds to organizer) → consumed by one tournament. Redemption/consumption only via Edge Functions.
 - **RLS** — profiles/ratings readable by all authenticated users (transparency); tournament family owned by its organizer; players read once a tournament leaves draft; admin-only tables for codes and sandbag flags.
 
-## Android app (M2–M5)
+## Android app (M2–M6)
 
 ```sh
 cd android
@@ -111,6 +112,17 @@ advancement (winner into the next round's slot) runs as a sync follow-up
 too, since the target match may not be cached on this device yet.
 Scoreboard Display: fullscreen landscape, keep-screen-on, read-only.
 
+**M6** — Results per division: auto-derived champion/runner-up (single
+elim: final's winner + loser, bronze winner as third place; round robin:
+tiebroken standings top 2), full standings, and the publish toggle that
+makes results player-visible (`divisions.published`). A pending-sync
+banner on the organizer dashboard surfaces unsynced `pending_ops` (spec
+§5.10 "rating pending sync"). Certificates: on-device PDF generation
+(`PdfDocument`, landscape A4, no external library) for Champion /
+Runner-Up / Participation with tournament, division, recipient, date,
+organizer name + logo (logo fetch degrades gracefully offline); shared
+via FileProvider + system share sheet, each recorded in `certificates`.
+
 ## Phase 1 milestones (spec §10)
 
 | # | Milestone | Status |
@@ -120,6 +132,6 @@ Scoreboard Display: fullscreen landscape, keep-screen-on, read-only.
 | M3 | Organizer activation + tournament/division setup | ✅ |
 | M4 | Registration (QR scan + manual) + brackets (SE + RR) | ✅ |
 | M5 | Live scorer (side-out + rally) + scoreboard + offline sync | ✅ |
-| M6 | Tabulation + Elo processing + certificates | — |
+| M6 | Tabulation + Elo processing + certificates | ✅ |
 | M7 | Admin web (codes, organizers, flags, DUPR verify) | — |
 | M8 | Polish + Taglish pass + release `PickleProPH-v1.0.0.apk` | — |

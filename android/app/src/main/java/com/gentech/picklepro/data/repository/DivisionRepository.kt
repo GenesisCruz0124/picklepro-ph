@@ -4,6 +4,7 @@ import android.content.Context
 import com.gentech.picklepro.data.remote.SupabaseModule
 import com.gentech.picklepro.data.remote.dto.DivisionDto
 import com.gentech.picklepro.data.remote.dto.DivisionLockUpdateDto
+import com.gentech.picklepro.data.remote.dto.DivisionPublishUpdateDto
 import com.gentech.picklepro.data.remote.dto.DivisionUpsertDto
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
@@ -29,6 +30,12 @@ class DivisionRepository(context: Context) {
     suspend fun setLocked(divisionId: String, locked: Boolean) {
         client.postgrest.from(TABLE)
             .update(DivisionLockUpdateDto(locked)) { filter { eq("id", divisionId) } }
+    }
+
+    /** Results publish toggle — makes results visible to players (spec §5.8). */
+    suspend fun setPublished(divisionId: String, published: Boolean) {
+        client.postgrest.from(TABLE)
+            .update(DivisionPublishUpdateDto(published)) { filter { eq("id", divisionId) } }
     }
 
     suspend fun create(division: DivisionUpsertDto): DivisionDto =

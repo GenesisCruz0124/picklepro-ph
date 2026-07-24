@@ -44,6 +44,9 @@ import com.gentech.picklepro.organizer.bracket.BracketSetupViewModelFactory
 import com.gentech.picklepro.organizer.bracket.BracketViewScreen
 import com.gentech.picklepro.organizer.bracket.BracketViewViewModel
 import com.gentech.picklepro.organizer.bracket.BracketViewViewModelFactory
+import com.gentech.picklepro.organizer.certificates.CertificatesScreen
+import com.gentech.picklepro.organizer.certificates.CertificatesViewModel
+import com.gentech.picklepro.organizer.certificates.CertificatesViewModelFactory
 import com.gentech.picklepro.organizer.dashboard.DashboardScreen
 import com.gentech.picklepro.organizer.dashboard.DashboardViewModel
 import com.gentech.picklepro.organizer.dashboard.DashboardViewModelFactory
@@ -62,6 +65,9 @@ import com.gentech.picklepro.organizer.registration.QrScanViewModelFactory
 import com.gentech.picklepro.organizer.registration.RegistrationListScreen
 import com.gentech.picklepro.organizer.registration.RegistrationListViewModel
 import com.gentech.picklepro.organizer.registration.RegistrationListViewModelFactory
+import com.gentech.picklepro.organizer.results.ResultsScreen
+import com.gentech.picklepro.organizer.results.ResultsViewModel
+import com.gentech.picklepro.organizer.results.ResultsViewModelFactory
 import com.gentech.picklepro.organizer.scorer.LiveScorerScreen
 import com.gentech.picklepro.organizer.scorer.LiveScorerViewModel
 import com.gentech.picklepro.organizer.scorer.LiveScorerViewModelFactory
@@ -113,6 +119,8 @@ private object OrganizerRoutes {
     const val REGISTRATIONS_PAIRING_PATTERN = "organizer/division/{divisionId}/registrations/pairing"
     const val BRACKET_SETUP_PATTERN = "organizer/division/{divisionId}/bracket/setup"
     const val BRACKET_VIEW_PATTERN = "organizer/division/{divisionId}/bracket/view"
+    const val RESULTS_PATTERN = "organizer/division/{divisionId}/results"
+    const val CERTIFICATES_PATTERN = "organizer/division/{divisionId}/certificates"
 
     fun tournamentDetail(id: String) = "organizer/tournament/$id"
     fun divisions(id: String) = "organizer/tournament/$id/divisions"
@@ -122,6 +130,8 @@ private object OrganizerRoutes {
     fun registrationsPairing(id: String) = "organizer/division/$id/registrations/pairing"
     fun bracketSetup(id: String) = "organizer/division/$id/bracket/setup"
     fun bracketView(id: String) = "organizer/division/$id/bracket/view"
+    fun results(id: String) = "organizer/division/$id/results"
+    fun certificates(id: String) = "organizer/division/$id/certificates"
 }
 
 /**
@@ -305,6 +315,7 @@ private fun HomeScaffold(
                             }
                             tabNavController.navigate(destination)
                         },
+                        onOpenResults = { divisionId -> tabNavController.navigate(OrganizerRoutes.results(divisionId)) },
                     )
                 }
 
@@ -375,6 +386,30 @@ private fun HomeScaffold(
                         factory = BracketViewViewModelFactory(appContext, divisionId),
                     )
                     BracketViewScreen(viewModel = viewModel, onOpenMatch = onOpenMatchScore)
+                }
+
+                composable(
+                    OrganizerRoutes.RESULTS_PATTERN,
+                    arguments = listOf(navArgument("divisionId") { type = NavType.StringType }),
+                ) { backStackEntry ->
+                    val divisionId = backStackEntry.arguments?.getString("divisionId").orEmpty()
+                    val viewModel: ResultsViewModel = viewModel(
+                        factory = ResultsViewModelFactory(appContext, divisionId),
+                    )
+                    ResultsScreen(
+                        viewModel = viewModel,
+                        onOpenCertificates = { tabNavController.navigate(OrganizerRoutes.certificates(divisionId)) },
+                    )
+                }
+                composable(
+                    OrganizerRoutes.CERTIFICATES_PATTERN,
+                    arguments = listOf(navArgument("divisionId") { type = NavType.StringType }),
+                ) { backStackEntry ->
+                    val divisionId = backStackEntry.arguments?.getString("divisionId").orEmpty()
+                    val viewModel: CertificatesViewModel = viewModel(
+                        factory = CertificatesViewModelFactory(appContext, divisionId),
+                    )
+                    CertificatesScreen(viewModel = viewModel)
                 }
             }
         }
