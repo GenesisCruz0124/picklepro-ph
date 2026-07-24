@@ -23,6 +23,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -39,7 +40,10 @@ import com.gentech.picklepro.data.repository.MatchHistoryItem
 import com.gentech.picklepro.data.repository.MatchOutcome
 
 @Composable
-fun ProfileScreen(viewModel: ProfileViewModel) {
+fun ProfileScreen(
+    viewModel: ProfileViewModel,
+    onBecomeOrganizerClick: () -> Unit = {},
+) {
     val state by viewModel.uiState.collectAsState()
     val profile = state.profile
 
@@ -89,6 +93,11 @@ fun ProfileScreen(viewModel: ProfileViewModel) {
                             Icon(Icons.Filled.Verified, contentDescription = null, modifier = Modifier.size(16.dp))
                         },
                     )
+                }
+                if (profile?.role == "player") {
+                    TextButton(onClick = onBecomeOrganizerClick) {
+                        Text(stringResource(R.string.profile_become_organizer_cta))
+                    }
                 }
             }
         }

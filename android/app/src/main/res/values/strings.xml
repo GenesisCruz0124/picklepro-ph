@@ -7,6 +7,7 @@
     <string name="common_retry">Ulitin</string>
     <string name="common_cancel">Kanselahin</string>
     <string name="common_save">I-save</string>
+    <string name="common_edit">I-edit</string>
     <string name="common_error_generic">May problema. Subukan ulit.</string>
     <string name="common_error_network">Walang connection. Subukan ulit.</string>
 
@@ -14,6 +15,7 @@
     <string name="nav_profile">Profile</string>
     <string name="nav_qr">QR Ko</string>
     <string name="nav_tournaments">Mga Tournament</string>
+    <string name="nav_organizer">Organizer</string>
 
     <!-- Auth -->
     <string name="auth_login_title">Mag-sign In</string>
@@ -57,6 +59,7 @@
     <string name="profile_dupr_verified_badge">DUPR Verified</string>
     <string name="profile_win">Panalo</string>
     <string name="profile_loss">Talo</string>
+    <string name="profile_become_organizer_cta">Maging Organizer</string>
 
     <!-- My QR -->
     <string name="qr_title">QR Ko</string>
@@ -65,4 +68,76 @@
     <string name="qr_brightness_toggle_off">Ibalik ang Normal na Brightness</string>
     <string name="qr_short_code_label">O sabihin ang code:</string>
     <string name="qr_offline_note">Gumagana ito kahit walang internet</string>
+
+    <!-- Organizer: activation -->
+    <string name="organizer_become_title">Maging Organizer</string>
+    <string name="organizer_become_subtitle">I-enter ang activation code galing kay Gen para makapag-create ng tournament.</string>
+    <string name="organizer_code_label">Activation Code</string>
+    <string name="organizer_redeem_button">I-redeem</string>
+    <string name="organizer_redeem_success">Na-redeem! Organizer ka na.</string>
+    <string name="organizer_error_code_not_found">Hindi mahanap ang code na iyan.</string>
+    <string name="organizer_error_code_redeemed">Na-redeem na ang code na ito.</string>
+    <string name="organizer_error_code_revoked">Na-revoke na ang code na ito.</string>
+    <string name="organizer_error_account_suspended">Suspended ang account mo. I-contact si admin.</string>
+
+    <!-- Organizer: wallet -->
+    <string name="organizer_wallet_title">Wallet</string>
+    <string name="organizer_wallet_credits_label">Tournament Credits</string>
+    <string name="organizer_wallet_credits_hint">Gumagamit ng 1 credit ang bawat bagong tournament.</string>
+    <string name="organizer_wallet_redeem_another">May Bagong Code</string>
+    <string name="organizer_wallet_buy_more">Bumili ng Credits</string>
+
+    <!-- Organizer: dashboard -->
+    <string name="organizer_dashboard_title">Organizer Dashboard</string>
+    <string name="organizer_dashboard_active_tournaments">Aktibong Tournament</string>
+    <string name="organizer_dashboard_total_players">Naka-register na Manlalaro</string>
+    <string name="organizer_dashboard_matches_today">Laban Ngayon</string>
+    <string name="organizer_dashboard_new_tournament">Bagong Tournament</string>
+    <string name="organizer_dashboard_empty">Wala ka pang tournament. Gumawa na!</string>
+
+    <!-- Organizer: tournament setup -->
+    <string name="tournament_setup_title_new">Bagong Tournament</string>
+    <string name="tournament_setup_title_edit">I-edit ang Tournament</string>
+    <string name="tournament_name_label">Pangalan ng Tournament</string>
+    <string name="tournament_venue_label">Venue</string>
+    <string name="tournament_description_label">Deskripsyon</string>
+    <string name="tournament_entry_fee_label">Entry Fee Note</string>
+    <string name="tournament_court_count_label">Bilang ng Courts</string>
+    <string name="tournament_start_date_label">Simula (YYYY-MM-DD)</string>
+    <string name="tournament_end_date_label">Katapusan (YYYY-MM-DD)</string>
+    <string name="tournament_logo_upload">I-upload ang Logo</string>
+    <string name="tournament_status_label">Status</string>
+    <string name="tournament_status_draft">Draft</string>
+    <string name="tournament_status_registration">Registration</string>
+    <string name="tournament_status_ongoing">Ongoing</string>
+    <string name="tournament_status_finished">Finished</string>
+    <string name="tournament_create_button">I-create ang Tournament</string>
+    <string name="tournament_no_credits">Wala kang tournament credit. Pumunta sa Wallet.</string>
+    <string name="tournament_divisions_button">Mga Division</string>
+
+    <!-- Organizer: division setup -->
+    <string name="division_setup_title">Mga Division</string>
+    <string name="division_add_button">Magdagdag ng Division</string>
+    <string name="division_name_label">Pangalan ng Division</string>
+    <string name="division_event_type_label">Event Type</string>
+    <string name="division_skill_gate_label">Skill Gate</string>
+    <string name="division_skill_gate_open">Open (walang gate)</string>
+    <string name="division_max_rating_label">Max Rating</string>
+    <string name="division_age_bracket_label">Age Bracket (optional)</string>
+    <string name="division_age_bracket_open">Open Age</string>
+    <string name="division_max_slots_label">Max Slots</string>
+    <string name="division_format_label">Format</string>
+    <string name="division_format_single_elim">Single Elimination</string>
+    <string name="division_format_round_robin">Round Robin</string>
+    <string name="division_game_to_label">Game To</string>
+    <string name="division_win_by_2_label">Win by 2</string>
+    <string name="division_best_of_label">Best Of</string>
+    <string name="division_scoring_mode_label">Scoring Mode</string>
+    <string name="division_scoring_mode_sideout">Traditional Side-Out</string>
+    <string name="division_scoring_mode_rally">Rally Scoring</string>
+    <string name="division_bronze_match_label">May Bronze Match</string>
+    <string name="division_save_button">I-save ang Division</string>
+    <string name="division_delete_button">Alisin</string>
+    <string name="division_locked_note">Naka-lock na ang division na ito (may bracket na).</string>
+    <string name="division_empty">Wala pang division. Magdagdag na.</string>
 </resources>
