@@ -1,0 +1,14 @@
+# Supabase CLI project config — PicklePro PH
+project_id = "picklepro-ph"
+
+[functions.redeem-code]
+verify_jwt = true
+
+[functions.consume-code-on-create]
+verify_jwt = true
+
+[functions.process-match-result]
+verify_jwt = true
+
+[functions.claim-shell-profile]
+verify_jwt = true

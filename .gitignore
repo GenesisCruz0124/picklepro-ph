@@ -1,0 +1,22 @@
+# Supabase local dev
+supabase/.temp/
+supabase/.branches/
+.env
+.env.*
+
+# Android (M2+)
+*.apk
+*.aab
+local.properties
+.gradle/
+build/
+captures/
+.cxx/
+keystore/
+*.keystore
+*.jks
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
