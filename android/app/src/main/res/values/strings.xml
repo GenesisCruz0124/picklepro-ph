@@ -242,4 +242,12 @@
 
     <!-- Sync status (spec §5.10) -->
     <string name="sync_pending_ops">%1$d resulta ang hinihintay ma-sync — pending pa ang rating updates.</string>
+
+    <!-- Player: tournaments (spec §4.4) -->
+    <string name="tournaments_title">Mga Tournament</string>
+    <string name="tournaments_search_hint">Maghanap ng tournament o lugar</string>
+    <string name="tournaments_empty">Walang tournament na makita.</string>
+    <string name="player_tournament_organizer_label">Organizer</string>
+    <string name="player_tournament_divisions_title">Mga Division</string>
+    <string name="player_division_registered">%1$s naka-register</string>
 </resources>

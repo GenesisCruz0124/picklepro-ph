@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material3.Icon
@@ -89,6 +90,12 @@ import com.gentech.picklepro.player.profile.ProfileViewModelFactory
 import com.gentech.picklepro.player.qr.QrScreen
 import com.gentech.picklepro.player.qr.QrViewModel
 import com.gentech.picklepro.player.qr.QrViewModelFactory
+import com.gentech.picklepro.player.tournaments.PlayerTournamentDetailScreen
+import com.gentech.picklepro.player.tournaments.PlayerTournamentDetailViewModel
+import com.gentech.picklepro.player.tournaments.PlayerTournamentDetailViewModelFactory
+import com.gentech.picklepro.player.tournaments.TournamentsScreen
+import com.gentech.picklepro.player.tournaments.TournamentsViewModel
+import com.gentech.picklepro.player.tournaments.TournamentsViewModelFactory
 
 private object Routes {
     const val AUTH = "auth"
@@ -104,7 +111,15 @@ private object Routes {
 private enum class HomeTab(val route: String) {
     PROFILE("profile"),
     QR("qr"),
+    TOURNAMENTS("tournaments"),
     ORGANIZER("organizer"),
+}
+
+private object PlayerRoutes {
+    const val TOURNAMENTS_LIST = "tournaments/list"
+    const val TOURNAMENT_DETAIL_PATTERN = "tournaments/{tournamentId}"
+
+    fun tournamentDetail(id: String) = "tournaments/$id"
 }
 
 private object OrganizerRoutes {
@@ -212,7 +227,11 @@ private fun HomeScaffold(
     val tabNavController = rememberNavController()
     val homeViewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory(appContext))
     val isOrganizer by homeViewModel.isOrganizer.collectAsState()
-    val visibleTabs = if (isOrganizer) HomeTab.entries.toList() else listOf(HomeTab.PROFILE, HomeTab.QR)
+    val visibleTabs = if (isOrganizer) {
+        HomeTab.entries.toList()
+    } else {
+        listOf(HomeTab.PROFILE, HomeTab.QR, HomeTab.TOURNAMENTS)
+    }
 
     Scaffold(
         bottomBar = {
@@ -224,6 +243,7 @@ private fun HomeScaffold(
                     val (icon, labelRes) = when (tab) {
                         HomeTab.PROFILE -> Icons.Filled.Person to R.string.nav_profile
                         HomeTab.QR -> Icons.Filled.QrCode to R.string.nav_qr
+                        HomeTab.TOURNAMENTS -> Icons.Filled.Groups to R.string.nav_tournaments
                         HomeTab.ORGANIZER -> Icons.Filled.EmojiEvents to R.string.nav_organizer
                     }
                     NavigationBarItem(
@@ -256,6 +276,26 @@ private fun HomeScaffold(
             composable(HomeTab.QR.route) {
                 val viewModel: QrViewModel = viewModel(factory = QrViewModelFactory(appContext))
                 QrScreen(viewModel = viewModel)
+            }
+
+            navigation(startDestination = PlayerRoutes.TOURNAMENTS_LIST, route = HomeTab.TOURNAMENTS.route) {
+                composable(PlayerRoutes.TOURNAMENTS_LIST) {
+                    val viewModel: TournamentsViewModel = viewModel(factory = TournamentsViewModelFactory(appContext))
+                    TournamentsScreen(
+                        viewModel = viewModel,
+                        onOpenTournament = { id -> tabNavController.navigate(PlayerRoutes.tournamentDetail(id)) },
+                    )
+                }
+                composable(
+                    PlayerRoutes.TOURNAMENT_DETAIL_PATTERN,
+                    arguments = listOf(navArgument("tournamentId") { type = NavType.StringType }),
+                ) { backStackEntry ->
+                    val tournamentId = backStackEntry.arguments?.getString("tournamentId").orEmpty()
+                    val viewModel: PlayerTournamentDetailViewModel = viewModel(
+                        factory = PlayerTournamentDetailViewModelFactory(appContext, tournamentId),
+                    )
+                    PlayerTournamentDetailScreen(viewModel = viewModel)
+                }
             }
 
             navigation(startDestination = OrganizerRoutes.DASHBOARD, route = HomeTab.ORGANIZER.route) {
