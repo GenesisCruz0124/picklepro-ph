@@ -7,7 +7,7 @@ Pickleball tournament management platform for the Philippine market.
 | Surface | Platform | Status |
 |---|---|---|
 | PicklePro PH app (players + organizers) | Android — Kotlin, Jetpack Compose, MVVM | **M6 ✅** (full organizer + player Phase-1 feature set through results + certificates); M7 admin web pending |
-| PicklePro PH Admin | Web — Vite + React + TS + Tailwind (Vercel) | M7 (pending) |
+| PicklePro PH Admin | Web — Vite + React + TS + Tailwind (Vercel) | **M7 ✅** (codes, organizers, sandbag queue, DUPR verify, stats) |
 | Backend | Supabase — Auth, Postgres + RLS, Storage, Edge Functions | **M1 ✅** |
 
 ## Repository layout
@@ -33,6 +33,12 @@ android/    Kotlin/Jetpack Compose app (Gradle project)
                  certificates
     data/        Room cache (incl. offline-first match_cache + pending_ops),
                  Supabase client + DTOs, repositories, sync (WorkManager), DataStore
+admin-web/  Vite + React + TS + Tailwind admin app (Vercel deploy target)
+  src/
+    auth/        login, session context, admin route guard
+    pages/       Stats, Activation Codes, Organizers, Sandbag Queue, DUPR Verify
+    components/  layout + TanStack Table wrapper
+    lib/         Supabase client, code generator, CSV export
 ```
 
 ## Backend (M1)
@@ -123,6 +129,30 @@ Runner-Up / Participation with tournament, division, recipient, date,
 organizer name + logo (logo fetch degrades gracefully offline); shared
 via FileProvider + system share sheet, each recorded in `certificates`.
 
+## Admin web (M7)
+
+```sh
+cd admin-web
+cp .env.example .env.local   # fill in VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY
+npm install
+npm run dev      # or: npm run build  (tsc --noEmit + vite build)
+```
+
+Unlike the Android app, **this build is verified**: `npm run build`
+(strict-mode `tsc --noEmit` + `vite build`) passes in this repo. Sign-in is
+Supabase email+password; the route guard requires the account's
+`profiles.role = 'admin'` — the same condition M1's RLS `is_admin()`
+enforces server-side, so the guard mirrors rather than duplicates the real
+gate (making someone admin = setting their profile role). Pages: Stats
+totals; Activation Codes (single/batch generation, price label/note/free
+flag, mark-sent/revoke, copy, CSV export); Organizers (tournament + code
+counts, suspend/reactivate); Sandbag Review Queue (evidence JSON, dismiss
+or set `ratings.override` + note); DUPR Verifications (proof screenshot,
+verify/reject). "Restrict from tiers" is deferred to the P3 sandbag engine
+— the Phase-1 schema has no tier-restriction field (see the M7 plan file).
+
+Deploy: point Vercel at `admin-web/` with the two `VITE_*` env vars set.
+
 ## Phase 1 milestones (spec §10)
 
 | # | Milestone | Status |
@@ -133,5 +163,5 @@ via FileProvider + system share sheet, each recorded in `certificates`.
 | M4 | Registration (QR scan + manual) + brackets (SE + RR) | ✅ |
 | M5 | Live scorer (side-out + rally) + scoreboard + offline sync | ✅ |
 | M6 | Tabulation + Elo processing + certificates | ✅ |
-| M7 | Admin web (codes, organizers, flags, DUPR verify) | — |
+| M7 | Admin web (codes, organizers, flags, DUPR verify) | ✅ |
 | M8 | Polish + Taglish pass + release `PickleProPH-v1.0.0.apk` | — |
