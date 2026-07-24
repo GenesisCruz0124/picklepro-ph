@@ -19,6 +19,13 @@ fun localProp(key: String): String =
         if (it.isEmpty()) logger.warn("Missing $key — set it in local.properties before building")
     }
 
+// Release signing (spec §10.4/§10.5): the keystore is never committed — CI
+// materializes android/app/release.keystore from the KEYSTORE_BASE64 secret
+// before this build runs. Locally, without a keystore, release builds fall
+// back to debug signing so `./gradlew assembleRelease` still works.
+val releaseKeystoreFile = file("release.keystore")
+val hasReleaseKeystore = releaseKeystoreFile.exists()
+
 android {
     namespace = "com.gentech.picklepro"
     compileSdk = 35
@@ -27,8 +34,8 @@ android {
         applicationId = "com.gentech.picklepro"
         minSdk = 26
         targetSdk = 35
-        versionCode = 5
-        versionName = "0.5.0"
+        versionCode = 6
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
@@ -36,10 +43,27 @@ android {
         buildConfigField("String", "SUPABASE_ANON_KEY", "\"${localProp("SUPABASE_ANON_KEY")}\"")
     }
 
+    signingConfigs {
+        if (hasReleaseKeystore) {
+            create("release") {
+                storeFile = releaseKeystoreFile
+                storePassword = localProp("KEYSTORE_PASSWORD")
+                keyAlias = localProp("KEY_ALIAS")
+                keyPassword = localProp("KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = if (hasReleaseKeystore) {
+                signingConfigs.getByName("release")
+            } else {
+                logger.warn("No release.keystore found — release build will use debug signing")
+                signingConfigs.getByName("debug")
+            }
         }
         debug {
             isMinifyEnabled = false

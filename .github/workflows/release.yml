@@ -1,0 +1,75 @@
+name: Release APK
+
+# Spec §10.4/§10.5: pushing a version tag builds the signed release APK,
+# renames it to the spec'd PickleProPH-<tag>.apk convention, and publishes
+# it as a GitHub Release with notes generated from commits since the
+# previous tag.
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: android
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Decode release keystore
+        run: echo "$KEYSTORE_BASE64" | base64 --decode > app/release.keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+
+      - name: Build signed release APK
+        run: ./gradlew assembleRelease --no-daemon
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      - name: Rename APK to release convention
+        run: |
+          mkdir -p ../release-out
+          cp app/build/outputs/apk/release/app-release.apk "../release-out/PickleProPH-${GITHUB_REF_NAME}.apk"
+
+      - name: Generate release notes from commit log
+        run: |
+          previous_tag=$(git tag --sort=-creatordate | grep -A1 "^${GITHUB_REF_NAME}$" | tail -n1)
+          if [ -n "$previous_tag" ] && [ "$previous_tag" != "$GITHUB_REF_NAME" ]; then
+            range="${previous_tag}..${GITHUB_REF_NAME}"
+          else
+            range="$GITHUB_REF_NAME"
+          fi
+          {
+            echo "## Changes"
+            git log "$range" --pretty=format:"- %s" --no-merges
+          } > ../release-out/RELEASE_NOTES.md
+
+      - name: Clean up keystore
+        if: always()
+        run: rm -f app/release.keystore
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: PicklePro PH ${{ github.ref_name }}
+          body_path: release-out/RELEASE_NOTES.md
+          files: release-out/PickleProPH-${{ github.ref_name }}.apk

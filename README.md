@@ -6,15 +6,16 @@ Pickleball tournament management platform for the Philippine market.
 
 | Surface | Platform | Status |
 |---|---|---|
-| PicklePro PH app (players + organizers) | Android — Kotlin, Jetpack Compose, MVVM | **M6 ✅** (full organizer + player Phase-1 feature set through results + certificates); M7 admin web pending |
+| PicklePro PH app (players + organizers) | Android — Kotlin, Jetpack Compose, MVVM | **M8 ✅ — v1.0.0** (full Phase 1 feature set; release signing + CI release workflow in place) |
 | PicklePro PH Admin | Web — Vite + React + TS + Tailwind (Vercel) | **M7 ✅** (codes, organizers, sandbag queue, DUPR verify, stats) |
 | Backend | Supabase — Auth, Postgres + RLS, Storage, Edge Functions | **M1 ✅** |
 
 ## Repository layout
 
 ```
-docs/       Product spec and reference documents
+docs/       Product spec, reference documents, release notes
 prompts/    Per-milestone plan files (plan-first workflow, spec §10)
+.github/workflows/release.yml  Tag-triggered signed-APK release (spec §10.5)
 supabase/
   migrations/   Postgres schema, functions/triggers, RLS policies
   functions/    Edge Functions (Deno):
@@ -27,7 +28,7 @@ android/    Kotlin/Jetpack Compose app (Gradle project)
     core/        design system, Taglish strings, QR encode/decode, rating tiers,
                  scoring engine, nav
     auth/        signup + login (screens, ViewModel)
-    player/      profile, my QR (screens, ViewModels)
+    player/      profile, my QR, tournaments browse + detail (screens, ViewModels)
     organizer/   activation, wallet, dashboard, tournament + division setup,
                  registration, brackets, live scorer, scoreboard, results,
                  certificates
@@ -57,7 +58,7 @@ Key backend rules:
 - **Monetization** — activation codes: Generated → Sent → Redeemed (binds to organizer) → consumed by one tournament. Redemption/consumption only via Edge Functions.
 - **RLS** — profiles/ratings readable by all authenticated users (transparency); tournament family owned by its organizer; players read once a tournament leaves draft; admin-only tables for codes and sandbag flags.
 
-## Android app (M2–M6)
+## Android app (M2–M8)
 
 ```sh
 cd android
@@ -65,12 +66,13 @@ cp local.properties.example local.properties   # fill in SUPABASE_URL / SUPABASE
 ./gradlew assembleDebug
 ```
 
-> **No Android SDK in this build environment.** The M2–M5 source and Gradle
+> **No Android SDK in this build environment.** The M2–M8 source and Gradle
 > config were written and reviewed carefully (package/path consistency,
-> string-resource references, and version-catalog wiring were all checked),
-> but could not be compiled here — do a real build to catch any API-level
-> mismatches (Supabase-kt, Vico, CameraX, ML Kit, WorkManager) before
-> shipping. Every algorithm with no Android dependency (bracket/round-robin
+> string-resource references, and version-catalog wiring were all checked
+> after every milestone), but none of it could be compiled here — run
+> `./gradlew assembleDebug` for real before shipping, to catch any
+> API-level mismatches (Supabase-kt, Vico, CameraX, ML Kit, WorkManager).
+> Every algorithm with no Android dependency (bracket/round-robin
 > generation, the point-by-point scoring engine) *was* independently
 > verified by porting it to Python and testing — see
 > `prompts/2026-07-24-m4-registration-brackets.md` and
@@ -79,6 +81,8 @@ cp local.properties.example local.properties   # fill in SUPABASE_URL / SUPABASE
 > building M5. See also
 > `prompts/2026-07-24-m2-android-scaffold-auth-profile-qr.md` and
 > `prompts/2026-07-24-m3-organizer-activation-tournament-division-setup.md`.
+> Before tagging a release, see "What still needs a human/CI" in
+> `prompts/2026-07-24-m8-polish-release.md`.
 
 **M2** — signup (self-declared starting tier, event-type preferences) and
 login against Supabase Auth; player profile (tier badges, Vico rating history
@@ -129,6 +133,18 @@ Runner-Up / Participation with tournament, division, recipient, date,
 organizer name + logo (logo fetch degrades gracefully offline); shared
 via FileProvider + system share sheet, each recorded in `certificates`.
 
+**M8** — Player Tournaments tab: browse all non-draft tournaments (grouped
+Upcoming/Ongoing/Finished, name-or-location search), open one to see its
+divisions and — once an organizer publishes them — podium results, reusing
+M6's `ResultsRepository`. Release infrastructure: `app/build.gradle.kts`
+gained a release `signingConfig` sourced from `android/app/release.keystore`
++ env vars (falls back to debug signing when no keystore is present, so
+local builds keep working); `.github/workflows/release.yml` builds a signed
+APK on every `v*` tag push, renames it `PickleProPH-<tag>.apk`, generates
+release notes from the commit log since the previous tag, and attaches both
+to a GitHub Release. Version bumped to **1.0.0** (`versionCode` 6); see
+`docs/RELEASE-NOTES-v1.0.0.md`.
+
 ## Admin web (M7)
 
 ```sh
@@ -164,4 +180,4 @@ Deploy: point Vercel at `admin-web/` with the two `VITE_*` env vars set.
 | M5 | Live scorer (side-out + rally) + scoreboard + offline sync | ✅ |
 | M6 | Tabulation + Elo processing + certificates | ✅ |
 | M7 | Admin web (codes, organizers, flags, DUPR verify) | ✅ |
-| M8 | Polish + Taglish pass + release `PickleProPH-v1.0.0.apk` | — |
+| M8 | Polish + Taglish pass + release `PickleProPH-v1.0.0.apk` | ✅ |
