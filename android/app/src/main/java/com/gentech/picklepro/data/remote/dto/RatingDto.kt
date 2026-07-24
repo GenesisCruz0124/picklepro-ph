@@ -18,6 +18,14 @@ data class RatingDto(
     val effectiveDisplay: Double get() = override ?: display
 }
 
+/** Shell player rating insert (spec §5.4) — RLS requires the player to be a shell owned by an organizer. */
+@Serializable
+data class RatingInsertDto(
+    @SerialName("player_id") val playerId: String,
+    @SerialName("event_type") val eventType: String,
+    val elo: Int,
+)
+
 /** Maps to public.rating_history (spec §7); one row per Elo change. */
 @Serializable
 data class RatingHistoryDto(

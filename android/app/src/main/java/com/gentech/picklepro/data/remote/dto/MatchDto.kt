@@ -33,3 +33,27 @@ data class MatchResultDto(
     @SerialName("finished_at") val finishedAt: String? = null,
     val divisions: DivisionSummaryDto,
 )
+
+/** A bracket/round-robin match, for generation and the bracket/standings view (spec §5.5). */
+@Serializable
+data class BracketMatchDto(
+    val id: String,
+    @SerialName("division_id") val divisionId: String,
+    val round: Int,
+    val position: Int,
+    @SerialName("side_a_ref") val sideARef: String? = null,
+    @SerialName("side_b_ref") val sideBRef: String? = null,
+    val status: String = "pending",
+    @SerialName("winner_ref") val winnerRef: String? = null,
+    val games: List<GameScoreDto> = emptyList(),
+)
+
+@Serializable
+data class MatchInsertDto(
+    @SerialName("division_id") val divisionId: String,
+    val round: Int,
+    val position: Int,
+    @SerialName("side_a_ref") val sideARef: String? = null,
+    @SerialName("side_b_ref") val sideBRef: String? = null,
+    val status: String = "pending",
+)

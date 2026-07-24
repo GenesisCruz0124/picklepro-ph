@@ -6,7 +6,7 @@ Pickleball tournament management platform for the Philippine market.
 
 | Surface | Platform | Status |
 |---|---|---|
-| PicklePro PH app (players + organizers) | Android — Kotlin, Jetpack Compose, MVVM | **M3 ✅** (auth, profile, QR, organizer activation + tournament/division setup); M4+ pending |
+| PicklePro PH app (players + organizers) | Android — Kotlin, Jetpack Compose, MVVM | **M4 ✅** (auth, profile, QR, organizer activation, tournament/division setup, registration, brackets); M5+ pending |
 | PicklePro PH Admin | Web — Vite + React + TS + Tailwind (Vercel) | M7 (pending) |
 | Backend | Supabase — Auth, Postgres + RLS, Storage, Edge Functions | **M1 ✅** |
 
@@ -47,7 +47,7 @@ Key backend rules:
 - **Monetization** — activation codes: Generated → Sent → Redeemed (binds to organizer) → consumed by one tournament. Redemption/consumption only via Edge Functions.
 - **RLS** — profiles/ratings readable by all authenticated users (transparency); tournament family owned by its organizer; players read once a tournament leaves draft; admin-only tables for codes and sandbag flags.
 
-## Android app (M2–M3)
+## Android app (M2–M4)
 
 ```sh
 cd android
@@ -55,14 +55,17 @@ cp local.properties.example local.properties   # fill in SUPABASE_URL / SUPABASE
 ./gradlew assembleDebug
 ```
 
-> **No Android SDK in this build environment.** The M2/M3 source and Gradle
+> **No Android SDK in this build environment.** The M2–M4 source and Gradle
 > config were written and reviewed carefully (package/path consistency,
 > string-resource references, and version-catalog wiring were all checked),
 > but could not be compiled here — do a real build to catch any API-level
-> mismatches (Supabase-kt, Vico) before shipping. See
+> mismatches (Supabase-kt, Vico, CameraX, ML Kit) before shipping. The
+> bracket/round-robin generation algorithms (pure Kotlin, no Android
+> dependency) *were* independently verified by porting them to Python and
+> testing — see `prompts/2026-07-24-m4-registration-brackets.md` for what
+> that caught. See also
 > `prompts/2026-07-24-m2-android-scaffold-auth-profile-qr.md` and
-> `prompts/2026-07-24-m3-organizer-activation-tournament-division-setup.md`
-> for details.
+> `prompts/2026-07-24-m3-organizer-activation-tournament-division-setup.md`.
 
 **M2** — signup (self-declared starting tier, event-type preferences) and
 login against Supabase Auth; player profile (tier badges, Vico rating history
@@ -77,6 +80,18 @@ logo upload, forward-only status control), and division setup (event type,
 skill gate, optional age bracket, scoring config). The Organizer bottom-nav
 tab appears reactively once the profile's cached role becomes organizer.
 
+**M4** — registration via QR scan (CameraX + ML Kit, decoding the same QR
+format My QR generates) or manual add (creates a claimable shell player);
+level-gate and slot validation on every registration; doubles/mixed
+pairing; a per-division registration list with search, check-in toggle,
+and unregister. Bracket generation for Single Elimination (seeded by
+rating, manual reorder, auto-byes, optional bronze match) and Round Robin
+(circle-method schedule, standings with head-to-head/point-diff/points-
+against tiebreakers); generating locks the division, and regeneration is
+blocked once any match has a result. Full offline-first sync (Room +
+`pending_ops` + WorkManager) is deliberately deferred to M5, per the
+milestone table's own pairing of "offline sync" with the live scorer.
+
 ## Phase 1 milestones (spec §10)
 
 | # | Milestone | Status |
@@ -84,7 +99,7 @@ tab appears reactively once the profile's cached role becomes organizer.
 | M1 | Supabase schema + RLS + Edge Functions | ✅ |
 | M2 | Android scaffold + auth + player profile + QR | ✅ |
 | M3 | Organizer activation + tournament/division setup | ✅ |
-| M4 | Registration (QR scan + manual) + brackets (SE + RR) | — |
+| M4 | Registration (QR scan + manual) + brackets (SE + RR) | ✅ |
 | M5 | Live scorer (side-out + rally) + scoreboard + offline sync | — |
 | M6 | Tabulation + Elo processing + certificates | — |
 | M7 | Admin web (codes, organizers, flags, DUPR verify) | — |

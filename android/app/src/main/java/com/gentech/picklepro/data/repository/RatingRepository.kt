@@ -27,6 +27,18 @@ class RatingRepository(context: Context) {
         return dtos
     }
 
+    /** Any player's rating for one event type, uncached — used for registration gate checks (spec §3.4). */
+    suspend fun getForPlayer(playerId: String, eventType: String): RatingDto? =
+        client.postgrest.from("ratings")
+            .select(Columns.ALL) {
+                filter {
+                    eq("player_id", playerId)
+                    eq("event_type", eventType)
+                }
+            }
+            .decodeList<RatingDto>()
+            .firstOrNull()
+
     /** Chart data for the profile's rating history (spec §4.2, Vico line chart). */
     suspend fun fetchHistory(playerId: String, eventType: String): List<RatingHistoryDto> =
         client.postgrest.from("rating_history")

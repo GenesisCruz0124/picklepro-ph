@@ -34,7 +34,11 @@ import com.gentech.picklepro.data.remote.dto.DivisionDto
 private val AGE_BRACKET_OPTIONS = listOf("19+", "35+", "50+", "60+")
 
 @Composable
-fun DivisionSetupScreen(viewModel: DivisionSetupViewModel) {
+fun DivisionSetupScreen(
+    viewModel: DivisionSetupViewModel,
+    onOpenRegistrations: (divisionId: String) -> Unit,
+    onOpenBracket: (divisionId: String, alreadyGenerated: Boolean) -> Unit,
+) {
     val state by viewModel.uiState.collectAsState()
     val form = state.form
 
@@ -82,6 +86,8 @@ fun DivisionSetupScreen(viewModel: DivisionSetupViewModel) {
                     division = division,
                     onEdit = { viewModel.startEditDivision(division) },
                     onDelete = { viewModel.deleteDivision(division.id) },
+                    onManageRegistrations = { onOpenRegistrations(division.id) },
+                    onManageBracket = { onOpenBracket(division.id, division.locked) },
                 )
             }
         }
@@ -89,7 +95,13 @@ fun DivisionSetupScreen(viewModel: DivisionSetupViewModel) {
 }
 
 @Composable
-private fun DivisionRow(division: DivisionDto, onEdit: () -> Unit, onDelete: () -> Unit) {
+private fun DivisionRow(
+    division: DivisionDto,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    onManageRegistrations: () -> Unit,
+    onManageBracket: () -> Unit,
+) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(text = division.name, style = MaterialTheme.typography.titleLarge)
@@ -105,6 +117,10 @@ private fun DivisionRow(division: DivisionDto, onEdit: () -> Unit, onDelete: () 
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                TextButton(onClick = onManageRegistrations) { Text(stringResource(R.string.division_manage_registrations)) }
+                TextButton(onClick = onManageBracket) { Text(stringResource(R.string.division_manage_bracket)) }
+            }
             if (division.locked) {
                 Text(
                     text = stringResource(R.string.division_locked_note),

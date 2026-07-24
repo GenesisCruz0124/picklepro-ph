@@ -140,4 +140,56 @@
     <string name="division_delete_button">Alisin</string>
     <string name="division_locked_note">Naka-lock na ang division na ito (may bracket na).</string>
     <string name="division_empty">Wala pang division. Magdagdag na.</string>
+    <string name="division_manage_registrations">Mga Registrasyon</string>
+    <string name="division_manage_bracket">Bracket</string>
+
+    <!-- Registration -->
+    <string name="registration_qr_scan_title">I-scan ang QR</string>
+    <string name="registration_camera_permission_needed">Kailangan ng camera permission para mag-scan.</string>
+    <string name="registration_camera_permission_grant">Payagan ang Camera</string>
+    <string name="registration_scan_registered">Na-register si %1$s!</string>
+    <string name="registration_scan_checked_in">Na-check-in si %1$s!</string>
+    <string name="registration_scan_rejected_gate">Hindi pasok si %1$s sa skill gate ng division na ito.</string>
+    <string name="registration_scan_rejected_slots">Puno na ang division na ito.</string>
+    <string name="registration_scan_another">Mag-scan Ulit</string>
+    <string name="registration_manual_add_title">Manual na Idagdag</string>
+    <string name="registration_manual_add_name_label">Pangalan</string>
+    <string name="registration_manual_add_rating_label">Declared Rating — %.1f</string>
+    <string name="registration_manual_add_button">Idagdag</string>
+    <string name="registration_list_title">Mga Naka-register</string>
+    <string name="registration_search_hint">Maghanap ng pangalan</string>
+    <string name="registration_check_in_label">Check-in</string>
+    <string name="registration_unregister_button">Alisin</string>
+    <string name="registration_scan_qr_button">I-scan ang QR</string>
+    <string name="registration_manual_add_nav_button">Manual na Idagdag</string>
+    <string name="registration_pairing_button">Pagsamahin (Doubles)</string>
+    <string name="registration_empty">Wala pang naka-register.</string>
+    <string name="registration_unpaired_label">Walang Partner</string>
+    <string name="registration_shell_badge">Shell</string>
+
+    <!-- Pairing -->
+    <string name="pairing_title">Pagsamahin ang Doubles</string>
+    <string name="pairing_select_two">Pumili ng dalawang manlalaro na walang partner pa.</string>
+    <string name="pairing_pair_button">I-pair</string>
+    <string name="pairing_unpair_button">I-unpair</string>
+    <string name="pairing_teams_title">Mga Team</string>
+    <string name="pairing_unpaired_title">Walang Partner</string>
+
+    <!-- Bracket -->
+    <string name="bracket_setup_title">Bracket Setup</string>
+    <string name="bracket_seed_reorder_hint">I-reorder ang seeding bago i-generate ang bracket.</string>
+    <string name="bracket_generate_button">I-generate ang Bracket</string>
+    <string name="bracket_regenerate_button">I-regenerate ang Bracket</string>
+    <string name="bracket_locked_note">Naka-lock na ang bracket. Hindi na puwedeng baguhin ang seeding.</string>
+    <string name="bracket_regenerate_blocked_note">May resulta na — hindi na puwedeng i-regenerate.</string>
+    <string name="bracket_not_enough_entrants">Kailangan ng at least 2 entrant para makagawa ng bracket.</string>
+    <string name="bracket_unpaired_warning">May mga manlalaro na walang partner — hindi sila isasama sa bracket.</string>
+    <string name="bracket_view_title">Bracket</string>
+    <string name="bracket_round_label">Round %1$d</string>
+    <string name="bracket_bye_label">BYE</string>
+    <string name="bracket_standings_title">Standings</string>
+    <string name="bracket_standings_wins">W</string>
+    <string name="bracket_standings_losses">L</string>
+    <string name="bracket_standings_point_diff">+/-</string>
+    <string name="bracket_view_button">Tingnan ang Bracket</string>
 </resources>

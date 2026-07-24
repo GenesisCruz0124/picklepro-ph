@@ -26,3 +26,10 @@ data class ProfileUpdateDto(
     @SerialName("photo_url") val photoUrl: String? = null,
     val location: String? = null,
 )
+
+/** Manual-add shell player insert (spec §5.4) — RLS requires is_shell = true from an organizer. */
+@Serializable
+data class ShellProfileInsertDto(
+    val name: String,
+    @SerialName("is_shell") val isShell: Boolean = true,
+)

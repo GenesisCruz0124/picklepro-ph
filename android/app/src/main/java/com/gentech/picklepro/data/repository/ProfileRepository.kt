@@ -33,6 +33,13 @@ class ProfileRepository(context: Context) {
         return dto
     }
 
+    /** Looks up any player by id without touching the "self" Room cache — used for QR-scan registration (spec §5.4). */
+    suspend fun findById(playerId: String): ProfileDto? =
+        client.postgrest.from(TABLE)
+            .select(Columns.ALL) { filter { eq("id", playerId) } }
+            .decodeList<ProfileDto>()
+            .firstOrNull()
+
     suspend fun updateProfile(playerId: String, name: String?, location: String?, photoUrl: String?) {
         client.postgrest.from(TABLE)
             .update(ProfileUpdateDto(name = name, location = location, photoUrl = photoUrl)) {

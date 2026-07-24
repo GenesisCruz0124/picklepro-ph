@@ -38,12 +38,30 @@ import com.gentech.picklepro.data.repository.AuthState
 import com.gentech.picklepro.organizer.activation.BecomeOrganizerScreen
 import com.gentech.picklepro.organizer.activation.BecomeOrganizerViewModel
 import com.gentech.picklepro.organizer.activation.BecomeOrganizerViewModelFactory
+import com.gentech.picklepro.organizer.bracket.BracketSetupScreen
+import com.gentech.picklepro.organizer.bracket.BracketSetupViewModel
+import com.gentech.picklepro.organizer.bracket.BracketSetupViewModelFactory
+import com.gentech.picklepro.organizer.bracket.BracketViewScreen
+import com.gentech.picklepro.organizer.bracket.BracketViewViewModel
+import com.gentech.picklepro.organizer.bracket.BracketViewViewModelFactory
 import com.gentech.picklepro.organizer.dashboard.DashboardScreen
 import com.gentech.picklepro.organizer.dashboard.DashboardViewModel
 import com.gentech.picklepro.organizer.dashboard.DashboardViewModelFactory
 import com.gentech.picklepro.organizer.division.DivisionSetupScreen
 import com.gentech.picklepro.organizer.division.DivisionSetupViewModel
 import com.gentech.picklepro.organizer.division.DivisionSetupViewModelFactory
+import com.gentech.picklepro.organizer.registration.ManualAddScreen
+import com.gentech.picklepro.organizer.registration.ManualAddViewModel
+import com.gentech.picklepro.organizer.registration.ManualAddViewModelFactory
+import com.gentech.picklepro.organizer.registration.PairingScreen
+import com.gentech.picklepro.organizer.registration.PairingViewModel
+import com.gentech.picklepro.organizer.registration.PairingViewModelFactory
+import com.gentech.picklepro.organizer.registration.QrScanScreen
+import com.gentech.picklepro.organizer.registration.QrScanViewModel
+import com.gentech.picklepro.organizer.registration.QrScanViewModelFactory
+import com.gentech.picklepro.organizer.registration.RegistrationListScreen
+import com.gentech.picklepro.organizer.registration.RegistrationListViewModel
+import com.gentech.picklepro.organizer.registration.RegistrationListViewModelFactory
 import com.gentech.picklepro.organizer.tournament.NewTournamentScreen
 import com.gentech.picklepro.organizer.tournament.NewTournamentViewModel
 import com.gentech.picklepro.organizer.tournament.NewTournamentViewModelFactory
@@ -78,8 +96,21 @@ private object OrganizerRoutes {
     const val NEW_TOURNAMENT = "organizer/tournament/new"
     const val TOURNAMENT_DETAIL_PATTERN = "organizer/tournament/{tournamentId}"
     const val DIVISIONS_PATTERN = "organizer/tournament/{tournamentId}/divisions"
+    const val REGISTRATIONS_PATTERN = "organizer/division/{divisionId}/registrations"
+    const val REGISTRATIONS_SCAN_PATTERN = "organizer/division/{divisionId}/registrations/scan"
+    const val REGISTRATIONS_MANUAL_PATTERN = "organizer/division/{divisionId}/registrations/manual"
+    const val REGISTRATIONS_PAIRING_PATTERN = "organizer/division/{divisionId}/registrations/pairing"
+    const val BRACKET_SETUP_PATTERN = "organizer/division/{divisionId}/bracket/setup"
+    const val BRACKET_VIEW_PATTERN = "organizer/division/{divisionId}/bracket/view"
+
     fun tournamentDetail(id: String) = "organizer/tournament/$id"
     fun divisions(id: String) = "organizer/tournament/$id/divisions"
+    fun registrations(id: String) = "organizer/division/$id/registrations"
+    fun registrationsScan(id: String) = "organizer/division/$id/registrations/scan"
+    fun registrationsManual(id: String) = "organizer/division/$id/registrations/manual"
+    fun registrationsPairing(id: String) = "organizer/division/$id/registrations/pairing"
+    fun bracketSetup(id: String) = "organizer/division/$id/bracket/setup"
+    fun bracketView(id: String) = "organizer/division/$id/bracket/view"
 }
 
 /**
@@ -223,7 +254,87 @@ private fun HomeScaffold(appContext: Context, onBecomeOrganizerClick: () -> Unit
                     val viewModel: DivisionSetupViewModel = viewModel(
                         factory = DivisionSetupViewModelFactory(appContext, tournamentId),
                     )
-                    DivisionSetupScreen(viewModel = viewModel)
+                    DivisionSetupScreen(
+                        viewModel = viewModel,
+                        onOpenRegistrations = { divisionId -> tabNavController.navigate(OrganizerRoutes.registrations(divisionId)) },
+                        onOpenBracket = { divisionId, alreadyGenerated ->
+                            val destination = if (alreadyGenerated) {
+                                OrganizerRoutes.bracketView(divisionId)
+                            } else {
+                                OrganizerRoutes.bracketSetup(divisionId)
+                            }
+                            tabNavController.navigate(destination)
+                        },
+                    )
+                }
+
+                composable(
+                    OrganizerRoutes.REGISTRATIONS_PATTERN,
+                    arguments = listOf(navArgument("divisionId") { type = NavType.StringType }),
+                ) { backStackEntry ->
+                    val divisionId = backStackEntry.arguments?.getString("divisionId").orEmpty()
+                    val viewModel: RegistrationListViewModel = viewModel(
+                        factory = RegistrationListViewModelFactory(appContext, divisionId),
+                    )
+                    RegistrationListScreen(
+                        viewModel = viewModel,
+                        onScanQr = { tabNavController.navigate(OrganizerRoutes.registrationsScan(divisionId)) },
+                        onManualAdd = { tabNavController.navigate(OrganizerRoutes.registrationsManual(divisionId)) },
+                        onPairing = { tabNavController.navigate(OrganizerRoutes.registrationsPairing(divisionId)) },
+                    )
+                }
+                composable(
+                    OrganizerRoutes.REGISTRATIONS_SCAN_PATTERN,
+                    arguments = listOf(navArgument("divisionId") { type = NavType.StringType }),
+                ) { backStackEntry ->
+                    val divisionId = backStackEntry.arguments?.getString("divisionId").orEmpty()
+                    val viewModel: QrScanViewModel = viewModel(factory = QrScanViewModelFactory(appContext, divisionId))
+                    QrScanScreen(viewModel = viewModel)
+                }
+                composable(
+                    OrganizerRoutes.REGISTRATIONS_MANUAL_PATTERN,
+                    arguments = listOf(navArgument("divisionId") { type = NavType.StringType }),
+                ) { backStackEntry ->
+                    val divisionId = backStackEntry.arguments?.getString("divisionId").orEmpty()
+                    val viewModel: ManualAddViewModel = viewModel(factory = ManualAddViewModelFactory(appContext, divisionId))
+                    ManualAddScreen(viewModel = viewModel)
+                }
+                composable(
+                    OrganizerRoutes.REGISTRATIONS_PAIRING_PATTERN,
+                    arguments = listOf(navArgument("divisionId") { type = NavType.StringType }),
+                ) { backStackEntry ->
+                    val divisionId = backStackEntry.arguments?.getString("divisionId").orEmpty()
+                    val viewModel: PairingViewModel = viewModel(factory = PairingViewModelFactory(appContext, divisionId))
+                    PairingScreen(viewModel = viewModel)
+                }
+
+                composable(
+                    OrganizerRoutes.BRACKET_SETUP_PATTERN,
+                    arguments = listOf(navArgument("divisionId") { type = NavType.StringType }),
+                ) { backStackEntry ->
+                    val divisionId = backStackEntry.arguments?.getString("divisionId").orEmpty()
+                    val viewModel: BracketSetupViewModel = viewModel(
+                        factory = BracketSetupViewModelFactory(appContext, divisionId),
+                    )
+                    BracketSetupScreen(
+                        viewModel = viewModel,
+                        onGenerated = {
+                            tabNavController.navigate(OrganizerRoutes.bracketView(divisionId)) {
+                                popUpTo(OrganizerRoutes.bracketSetup(divisionId)) { inclusive = true }
+                            }
+                        },
+                        onViewExistingBracket = { tabNavController.navigate(OrganizerRoutes.bracketView(divisionId)) },
+                    )
+                }
+                composable(
+                    OrganizerRoutes.BRACKET_VIEW_PATTERN,
+                    arguments = listOf(navArgument("divisionId") { type = NavType.StringType }),
+                ) { backStackEntry ->
+                    val divisionId = backStackEntry.arguments?.getString("divisionId").orEmpty()
+                    val viewModel: BracketViewViewModel = viewModel(
+                        factory = BracketViewViewModelFactory(appContext, divisionId),
+                    )
+                    BracketViewScreen(viewModel = viewModel)
                 }
             }
         }

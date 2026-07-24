@@ -41,3 +41,6 @@ data class DivisionUpsertDto(
     @SerialName("scoring_mode") val scoringMode: String = "sideout",
     @SerialName("bronze_match") val bronzeMatch: Boolean = false,
 )
+
+@Serializable
+data class DivisionLockUpdateDto(val locked: Boolean)
