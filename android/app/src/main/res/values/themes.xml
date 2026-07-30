@@ -6,4 +6,13 @@
         <item name="android:windowBackground">@color/pickle_green</item>
         <item name="android:statusBarColor">@color/pickle_green</item>
     </style>
+
+    <!-- Cold-start splash (androidx.core.splashscreen): the launcher icon on
+         the brand green background, handing off to Theme.PicklePro once
+         MainActivity's first frame is drawn. -->
+    <style name="Theme.PicklePro.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/pickle_green</item>
+        <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="postSplashScreenTheme">@style/Theme.PicklePro</item>
+    </style>
 </resources>
