@@ -4,14 +4,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -40,6 +47,7 @@ fun LiveScorerScreen(
     viewModel: LiveScorerViewModel,
     onOpenScoreboard: () -> Unit,
     onOpenBracket: () -> Unit,
+    onBack: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsState()
     val match = state.match
@@ -74,6 +82,7 @@ fun LiveScorerScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .windowInsetsPadding(WindowInsets.safeDrawing)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -82,10 +91,15 @@ fun LiveScorerScreen(
         } else {
             match.currentGameNumber
         }
-        Text(
-            stringResource(R.string.scorer_game_label, displayGameNumber.coerceAtLeast(1)),
-            style = MaterialTheme.typography.titleLarge,
-        )
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            IconButton(onClick = onBack) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.common_back))
+            }
+            Text(
+                stringResource(R.string.scorer_game_label, displayGameNumber.coerceAtLeast(1)),
+                style = MaterialTheme.typography.titleLarge,
+            )
+        }
 
         if (ScoreEngine.shouldShowEndSwapReminder(gameState, config.gameTo)) {
             Card(modifier = Modifier.fillMaxWidth()) {

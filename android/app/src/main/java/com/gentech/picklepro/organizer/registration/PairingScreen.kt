@@ -13,6 +13,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -23,51 +24,53 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gentech.picklepro.R
+import com.gentech.picklepro.core.designsystem.PickleProTopBar
 import com.gentech.picklepro.data.remote.dto.RegistrationWithProfileDto
 
 @Composable
-fun PairingScreen(viewModel: PairingViewModel) {
+fun PairingScreen(viewModel: PairingViewModel, onBack: () -> Unit) {
     val state by viewModel.uiState.collectAsState()
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        item {
-            Text(stringResource(R.string.pairing_title), style = MaterialTheme.typography.headlineMedium)
-        }
-        item {
-            Text(stringResource(R.string.pairing_select_two), style = MaterialTheme.typography.bodyMedium)
-        }
-        state.errorMessage?.let { message ->
-            item { Text(message, color = MaterialTheme.colorScheme.error) }
-        }
-
-        if (state.isLoading) {
-            item { CircularProgressIndicator() }
-        } else {
-            item { Text(stringResource(R.string.pairing_unpaired_title), style = MaterialTheme.typography.titleLarge) }
-            items(state.unpaired, key = { it.id }) { registration ->
-                UnpairedRow(
-                    registration = registration,
-                    selected = registration.id in state.selectedIds,
-                    onToggle = { viewModel.toggleSelect(registration.id) },
-                )
-            }
+    Scaffold(
+        topBar = { PickleProTopBar(stringResource(R.string.pairing_title), onBack) },
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
             item {
-                Button(
-                    onClick = viewModel::pairSelected,
-                    enabled = state.selectedIds.size == 2,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    Text(stringResource(R.string.pairing_pair_button))
-                }
+                Text(stringResource(R.string.pairing_select_two), style = MaterialTheme.typography.bodyMedium)
+            }
+            state.errorMessage?.let { message ->
+                item { Text(message, color = MaterialTheme.colorScheme.error) }
             }
 
-            item { Text(stringResource(R.string.pairing_teams_title), style = MaterialTheme.typography.titleLarge) }
-            items(state.teams, key = { it.first().teamId ?: it.first().id }) { team ->
-                TeamRow(team = team, onUnpair = { viewModel.unpair(team.first().teamId!!) })
+            if (state.isLoading) {
+                item { CircularProgressIndicator() }
+            } else {
+                item { Text(stringResource(R.string.pairing_unpaired_title), style = MaterialTheme.typography.titleLarge) }
+                items(state.unpaired, key = { it.id }) { registration ->
+                    UnpairedRow(
+                        registration = registration,
+                        selected = registration.id in state.selectedIds,
+                        onToggle = { viewModel.toggleSelect(registration.id) },
+                    )
+                }
+                item {
+                    Button(
+                        onClick = viewModel::pairSelected,
+                        enabled = state.selectedIds.size == 2,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Text(stringResource(R.string.pairing_pair_button))
+                    }
+                }
+
+                item { Text(stringResource(R.string.pairing_teams_title), style = MaterialTheme.typography.titleLarge) }
+                items(state.teams, key = { it.first().teamId ?: it.first().id }) { team ->
+                    TeamRow(team = team, onUnpair = { viewModel.unpair(team.first().teamId!!) })
+                }
             }
         }
     }

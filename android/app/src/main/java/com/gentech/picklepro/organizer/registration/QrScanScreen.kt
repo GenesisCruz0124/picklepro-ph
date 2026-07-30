@@ -14,6 +14,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,10 +29,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.gentech.picklepro.R
+import com.gentech.picklepro.core.designsystem.PickleProTopBar
 import com.gentech.picklepro.data.repository.RejectReason
 
 @Composable
-fun QrScanScreen(viewModel: QrScanViewModel) {
+fun QrScanScreen(viewModel: QrScanViewModel, onBack: () -> Unit) {
     val state by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     var hasPermission by remember {
@@ -43,41 +45,45 @@ fun QrScanScreen(viewModel: QrScanViewModel) {
         hasPermission = granted
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        if (!hasPermission) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(24.dp),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(stringResource(R.string.registration_camera_permission_needed))
-                Button(onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) }) {
-                    Text(stringResource(R.string.registration_camera_permission_grant))
+    Scaffold(
+        topBar = { PickleProTopBar(stringResource(R.string.registration_qr_scan_title), onBack) },
+    ) { padding ->
+        Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+            if (!hasPermission) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(24.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(stringResource(R.string.registration_camera_permission_needed))
+                    Button(onClick = { permissionLauncher.launch(Manifest.permission.CAMERA) }) {
+                        Text(stringResource(R.string.registration_camera_permission_grant))
+                    }
+                }
+            } else if (state.isScanning) {
+                CameraPreview(onBarcodeDetected = viewModel::onBarcodeDetected)
+            }
+
+            if (state.isProcessing) {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    CircularProgressIndicator()
                 }
             }
-        } else if (state.isScanning) {
-            CameraPreview(onBarcodeDetected = viewModel::onBarcodeDetected)
-        }
 
-        if (state.isProcessing) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
-            }
-        }
-
-        state.outcome?.let { outcome ->
-            Card(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth()
-                    .padding(16.dp),
-            ) {
-                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(outcomeMessage(outcome), style = MaterialTheme.typography.titleLarge)
-                    Button(onClick = viewModel::scanAnother, modifier = Modifier.fillMaxWidth()) {
-                        Text(stringResource(R.string.registration_scan_another))
+            state.outcome?.let { outcome ->
+                Card(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                ) {
+                    Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text(outcomeMessage(outcome), style = MaterialTheme.typography.titleLarge)
+                        Button(onClick = viewModel::scanAnother, modifier = Modifier.fillMaxWidth()) {
+                            Text(stringResource(R.string.registration_scan_another))
+                        }
                     }
                 }
             }

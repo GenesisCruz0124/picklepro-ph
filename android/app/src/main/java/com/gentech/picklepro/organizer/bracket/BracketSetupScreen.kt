@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,12 +29,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gentech.picklepro.R
+import com.gentech.picklepro.core.designsystem.PickleProTopBar
 
 @Composable
 fun BracketSetupScreen(
     viewModel: BracketSetupViewModel,
     onGenerated: () -> Unit,
     onViewExistingBracket: () -> Unit,
+    onBack: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsState()
 
@@ -41,84 +44,84 @@ fun BracketSetupScreen(
         if (state.generated) onGenerated()
     }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        item {
-            Text(stringResource(R.string.bracket_setup_title), style = MaterialTheme.typography.headlineMedium)
-        }
-
-        if (state.division?.locked == true) {
-            item {
-                OutlinedButton(onClick = onViewExistingBracket, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.bracket_view_button))
+    Scaffold(
+        topBar = { PickleProTopBar(stringResource(R.string.bracket_setup_title), onBack) },
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            if (state.division?.locked == true) {
+                item {
+                    OutlinedButton(onClick = onViewExistingBracket, modifier = Modifier.fillMaxWidth()) {
+                        Text(stringResource(R.string.bracket_view_button))
+                    }
                 }
             }
-        }
 
-        if (!state.canRegenerate) {
-            item {
-                Text(
-                    stringResource(R.string.bracket_regenerate_blocked_note),
-                    color = MaterialTheme.colorScheme.error,
-                )
+            if (!state.canRegenerate) {
+                item {
+                    Text(
+                        stringResource(R.string.bracket_regenerate_blocked_note),
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+            } else if (state.division?.locked == true) {
+                item {
+                    Text(stringResource(R.string.bracket_locked_note), color = MaterialTheme.colorScheme.error)
+                }
             }
-        } else if (state.division?.locked == true) {
-            item {
-                Text(stringResource(R.string.bracket_locked_note), color = MaterialTheme.colorScheme.error)
+
+            if (state.unpairedCount > 0) {
+                item {
+                    Text(stringResource(R.string.bracket_unpaired_warning), color = MaterialTheme.colorScheme.error)
+                }
             }
-        }
 
-        if (state.unpairedCount > 0) {
-            item {
-                Text(stringResource(R.string.bracket_unpaired_warning), color = MaterialTheme.colorScheme.error)
+            item { Text(stringResource(R.string.bracket_seed_reorder_hint), style = MaterialTheme.typography.bodyMedium) }
+
+            if (state.isLoading) {
+                item { CircularProgressIndicator() }
+            } else {
+                itemsIndexed(state.seeds, key = { _, e -> e.ref }) { index, entrant ->
+                    SeedRow(
+                        seedNumber = index + 1,
+                        name = entrant.name,
+                        rating = entrant.seedRating,
+                        canMoveUp = index > 0 && state.canRegenerate,
+                        canMoveDown = index < state.seeds.size - 1 && state.canRegenerate,
+                        onMoveUp = { viewModel.moveUp(index) },
+                        onMoveDown = { viewModel.moveDown(index) },
+                    )
+                }
             }
-        }
 
-        item { Text(stringResource(R.string.bracket_seed_reorder_hint), style = MaterialTheme.typography.bodyMedium) }
-
-        if (state.isLoading) {
-            item { CircularProgressIndicator() }
-        } else {
-            itemsIndexed(state.seeds, key = { _, e -> e.ref }) { index, entrant ->
-                SeedRow(
-                    seedNumber = index + 1,
-                    name = entrant.name,
-                    rating = entrant.seedRating,
-                    canMoveUp = index > 0 && state.canRegenerate,
-                    canMoveDown = index < state.seeds.size - 1 && state.canRegenerate,
-                    onMoveUp = { viewModel.moveUp(index) },
-                    onMoveDown = { viewModel.moveDown(index) },
-                )
+            when (state.message) {
+                "not_enough" -> item { Text(stringResource(R.string.bracket_not_enough_entrants), color = MaterialTheme.colorScheme.error) }
+                "has_results" -> item { Text(stringResource(R.string.bracket_regenerate_blocked_note), color = MaterialTheme.colorScheme.error) }
             }
-        }
 
-        when (state.message) {
-            "not_enough" -> item { Text(stringResource(R.string.bracket_not_enough_entrants), color = MaterialTheme.colorScheme.error) }
-            "has_results" -> item { Text(stringResource(R.string.bracket_regenerate_blocked_note), color = MaterialTheme.colorScheme.error) }
-        }
-
-        if (state.canRegenerate) {
-            item {
-                Button(
-                    onClick = viewModel::generate,
-                    enabled = !state.isGenerating && state.seeds.size >= 2,
-                    modifier = Modifier.fillMaxWidth(),
-                ) {
-                    if (state.isGenerating) {
-                        CircularProgressIndicator(modifier = Modifier.padding(2.dp), strokeWidth = 2.dp)
-                    } else {
-                        Text(
-                            stringResource(
-                                if (state.division?.locked == true) {
-                                    R.string.bracket_regenerate_button
-                                } else {
-                                    R.string.bracket_generate_button
-                                },
-                            ),
-                        )
+            if (state.canRegenerate) {
+                item {
+                    Button(
+                        onClick = viewModel::generate,
+                        enabled = !state.isGenerating && state.seeds.size >= 2,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        if (state.isGenerating) {
+                            CircularProgressIndicator(modifier = Modifier.padding(2.dp), strokeWidth = 2.dp)
+                        } else {
+                            Text(
+                                stringResource(
+                                    if (state.division?.locked == true) {
+                                        R.string.bracket_regenerate_button
+                                    } else {
+                                        R.string.bracket_generate_button
+                                    },
+                                ),
+                            )
+                        }
                     }
                 }
             }

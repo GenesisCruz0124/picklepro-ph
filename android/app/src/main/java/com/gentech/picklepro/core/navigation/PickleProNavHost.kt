@@ -189,7 +189,11 @@ fun PickleProNavHost() {
         }
         composable(Routes.BECOME_ORGANIZER) {
             val viewModel: BecomeOrganizerViewModel = viewModel(factory = BecomeOrganizerViewModelFactory(appContext))
-            BecomeOrganizerScreen(viewModel = viewModel, onRedeemed = { navController.popBackStack() })
+            BecomeOrganizerScreen(
+                viewModel = viewModel,
+                onRedeemed = { navController.popBackStack() },
+                onBack = { navController.popBackStack() },
+            )
         }
 
         // Top-level, not nested under HomeScaffold's Scaffold: the scoreboard is spec'd as a
@@ -205,6 +209,7 @@ fun PickleProNavHost() {
                 viewModel = viewModel,
                 onOpenScoreboard = { navController.navigate(Routes.matchScoreboard(matchId)) },
                 onOpenBracket = { navController.popBackStack() },
+                onBack = { navController.popBackStack() },
             )
         }
         composable(
@@ -294,7 +299,7 @@ private fun HomeScaffold(
                     val viewModel: PlayerTournamentDetailViewModel = viewModel(
                         factory = PlayerTournamentDetailViewModelFactory(appContext, tournamentId),
                     )
-                    PlayerTournamentDetailScreen(viewModel = viewModel)
+                    PlayerTournamentDetailScreen(viewModel = viewModel, onBack = { tabNavController.popBackStack() })
                 }
             }
 
@@ -310,7 +315,11 @@ private fun HomeScaffold(
                 }
                 composable(OrganizerRoutes.WALLET) {
                     val viewModel: WalletViewModel = viewModel(factory = WalletViewModelFactory(appContext))
-                    WalletScreen(viewModel = viewModel, onRedeemAnother = onBecomeOrganizerClick)
+                    WalletScreen(
+                        viewModel = viewModel,
+                        onRedeemAnother = onBecomeOrganizerClick,
+                        onBack = { tabNavController.popBackStack() },
+                    )
                 }
                 composable(OrganizerRoutes.NEW_TOURNAMENT) {
                     val viewModel: NewTournamentViewModel = viewModel(factory = NewTournamentViewModelFactory(appContext))
@@ -321,6 +330,7 @@ private fun HomeScaffold(
                                 popUpTo(OrganizerRoutes.NEW_TOURNAMENT) { inclusive = true }
                             }
                         },
+                        onBack = { tabNavController.popBackStack() },
                     )
                 }
                 composable(
@@ -334,6 +344,7 @@ private fun HomeScaffold(
                     TournamentDetailScreen(
                         viewModel = viewModel,
                         onOpenDivisions = { tabNavController.navigate(OrganizerRoutes.divisions(tournamentId)) },
+                        onBack = { tabNavController.popBackStack() },
                     )
                 }
                 composable(
@@ -356,6 +367,7 @@ private fun HomeScaffold(
                             tabNavController.navigate(destination)
                         },
                         onOpenResults = { divisionId -> tabNavController.navigate(OrganizerRoutes.results(divisionId)) },
+                        onBack = { tabNavController.popBackStack() },
                     )
                 }
 
@@ -372,6 +384,7 @@ private fun HomeScaffold(
                         onScanQr = { tabNavController.navigate(OrganizerRoutes.registrationsScan(divisionId)) },
                         onManualAdd = { tabNavController.navigate(OrganizerRoutes.registrationsManual(divisionId)) },
                         onPairing = { tabNavController.navigate(OrganizerRoutes.registrationsPairing(divisionId)) },
+                        onBack = { tabNavController.popBackStack() },
                     )
                 }
                 composable(
@@ -380,7 +393,7 @@ private fun HomeScaffold(
                 ) { backStackEntry ->
                     val divisionId = backStackEntry.arguments?.getString("divisionId").orEmpty()
                     val viewModel: QrScanViewModel = viewModel(factory = QrScanViewModelFactory(appContext, divisionId))
-                    QrScanScreen(viewModel = viewModel)
+                    QrScanScreen(viewModel = viewModel, onBack = { tabNavController.popBackStack() })
                 }
                 composable(
                     OrganizerRoutes.REGISTRATIONS_MANUAL_PATTERN,
@@ -388,7 +401,7 @@ private fun HomeScaffold(
                 ) { backStackEntry ->
                     val divisionId = backStackEntry.arguments?.getString("divisionId").orEmpty()
                     val viewModel: ManualAddViewModel = viewModel(factory = ManualAddViewModelFactory(appContext, divisionId))
-                    ManualAddScreen(viewModel = viewModel)
+                    ManualAddScreen(viewModel = viewModel, onBack = { tabNavController.popBackStack() })
                 }
                 composable(
                     OrganizerRoutes.REGISTRATIONS_PAIRING_PATTERN,
@@ -396,7 +409,7 @@ private fun HomeScaffold(
                 ) { backStackEntry ->
                     val divisionId = backStackEntry.arguments?.getString("divisionId").orEmpty()
                     val viewModel: PairingViewModel = viewModel(factory = PairingViewModelFactory(appContext, divisionId))
-                    PairingScreen(viewModel = viewModel)
+                    PairingScreen(viewModel = viewModel, onBack = { tabNavController.popBackStack() })
                 }
 
                 composable(
@@ -415,6 +428,7 @@ private fun HomeScaffold(
                             }
                         },
                         onViewExistingBracket = { tabNavController.navigate(OrganizerRoutes.bracketView(divisionId)) },
+                        onBack = { tabNavController.popBackStack() },
                     )
                 }
                 composable(
@@ -425,7 +439,11 @@ private fun HomeScaffold(
                     val viewModel: BracketViewViewModel = viewModel(
                         factory = BracketViewViewModelFactory(appContext, divisionId),
                     )
-                    BracketViewScreen(viewModel = viewModel, onOpenMatch = onOpenMatchScore)
+                    BracketViewScreen(
+                        viewModel = viewModel,
+                        onOpenMatch = onOpenMatchScore,
+                        onBack = { tabNavController.popBackStack() },
+                    )
                 }
 
                 composable(
@@ -439,6 +457,7 @@ private fun HomeScaffold(
                     ResultsScreen(
                         viewModel = viewModel,
                         onOpenCertificates = { tabNavController.navigate(OrganizerRoutes.certificates(divisionId)) },
+                        onBack = { tabNavController.popBackStack() },
                     )
                 }
                 composable(
@@ -449,7 +468,7 @@ private fun HomeScaffold(
                     val viewModel: CertificatesViewModel = viewModel(
                         factory = CertificatesViewModelFactory(appContext, divisionId),
                     )
-                    CertificatesScreen(viewModel = viewModel)
+                    CertificatesScreen(viewModel = viewModel, onBack = { tabNavController.popBackStack() })
                 }
             }
         }
