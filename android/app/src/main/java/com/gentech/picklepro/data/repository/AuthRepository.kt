@@ -2,8 +2,8 @@ package com.gentech.picklepro.data.repository
 
 import android.content.Context
 import com.gentech.picklepro.data.remote.SupabaseModule
-import io.github.jan.supabase.auth.SessionStatus
 import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.status.SessionStatus
 import io.github.jan.supabase.auth.providers.builtin.Email
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

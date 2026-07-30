@@ -6,7 +6,7 @@ Pickleball tournament management platform for the Philippine market.
 
 | Surface | Platform | Status |
 |---|---|---|
-| PicklePro PH app (players + organizers) | Android — Kotlin, Jetpack Compose, MVVM | **M8 ✅ — v1.0.0** (full Phase 1 feature set; release signing + CI release workflow in place) |
+| PicklePro PH app (players + organizers) | Android — Kotlin, Jetpack Compose, MVVM | **M8 ✅ — v1.0.0** (full Phase 1 feature set; `./gradlew assembleDebug` verified building; release signing + CI release workflow in place) |
 | PicklePro PH Admin | Web — Vite + React + TS + Tailwind (Vercel) | **M7 ✅** (codes, organizers, sandbag queue, DUPR verify, stats) |
 | Backend | Supabase — Auth, Postgres + RLS, Storage, Edge Functions | **M1 ✅** |
 
@@ -66,22 +66,23 @@ cp local.properties.example local.properties   # fill in SUPABASE_URL / SUPABASE
 ./gradlew assembleDebug
 ```
 
-> **No Android SDK in this build environment.** The M2–M8 source and Gradle
-> config were written and reviewed carefully (package/path consistency,
-> string-resource references, and version-catalog wiring were all checked
-> after every milestone), but none of it could be compiled here — run
-> `./gradlew assembleDebug` for real before shipping, to catch any
-> API-level mismatches (Supabase-kt, Vico, CameraX, ML Kit, WorkManager).
-> Every algorithm with no Android dependency (bracket/round-robin
-> generation, the point-by-point scoring engine) *was* independently
-> verified by porting it to Python and testing — see
-> `prompts/2026-07-24-m4-registration-brackets.md` and
-> `prompts/2026-07-24-m5-live-scorer-scoreboard-offline-sync.md` for what
-> that caught, including a real bracket-advancement bug found while
-> building M5. See also
-> `prompts/2026-07-24-m2-android-scaffold-auth-profile-qr.md` and
-> `prompts/2026-07-24-m3-organizer-activation-tournament-division-setup.md`.
-> Before tagging a release, see "What still needs a human/CI" in
+> **`./gradlew assembleDebug` builds successfully** (verified by installing
+> a throwaway Android SDK/cmdline-tools and running it for real). M2–M8 had
+> only manual/Python verification until then, since no Android SDK was
+> normally available in this environment — that first real build surfaced
+> ~9 genuine compile errors (API drift against the actual Supabase-kt 3.0.3
+> / Vico 2.0.0-beta.3 releases, a couple of wrong-package imports, one
+> real same-package private-class name collision, and an `if (cond) x else
+> {}` ambiguous-lambda footgun repeated in two files) — all fixed; see the
+> "Fix real compile errors..." commit for the specifics. This was a debug
+> build only (unsigned, no `local.properties` secrets configured beyond
+> placeholders) — a release build and an on-device smoke test still need
+> a real Supabase project and keystore. Every algorithm with no Android
+> dependency (bracket/round-robin generation, the point-by-point scoring
+> engine) was *also* independently verified by porting it to Python and
+> testing — see `prompts/2026-07-24-m4-registration-brackets.md` and
+> `prompts/2026-07-24-m5-live-scorer-scoreboard-offline-sync.md`. Before
+> tagging a release, see "What still needs a human/CI" in
 > `prompts/2026-07-24-m8-polish-release.md`.
 
 **M2** — signup (self-declared starting tier, event-type preferences) and

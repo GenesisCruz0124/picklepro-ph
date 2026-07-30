@@ -102,7 +102,7 @@ private fun BracketMatchRow(match: BracketMatchDto, nameByRef: Map<String, Strin
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        onClick = if (ready) onClick else {},
+        onClick = { if (ready) onClick() },
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Text("$nameA  vs  $nameB", style = MaterialTheme.typography.titleLarge)

@@ -21,7 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberSaveable
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +43,8 @@ private tailrec fun Context.findActivity(): Activity? = when (this) {
 fun QrScreen(viewModel: QrViewModel) {
     val profile by viewModel.profile.collectAsState()
     var brightnessMaxed by rememberSaveable { mutableStateOf(false) }
-    val activity = remember(LocalContext.current) { LocalContext.current.findActivity() }
+    val context = LocalContext.current
+    val activity = remember(context) { context.findActivity() }
 
     ApplyMaxBrightness(activity = activity, enabled = brightnessMaxed)
 

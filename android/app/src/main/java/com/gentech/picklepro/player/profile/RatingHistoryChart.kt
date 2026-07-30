@@ -8,10 +8,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottom
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStart
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 
@@ -22,7 +24,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
  */
 @Composable
 fun RatingHistoryChart(points: List<Double>, modifier: Modifier = Modifier) {
-    val modelProducer = remember { CartesianChartModelProducer.build() }
+    val modelProducer = remember { CartesianChartModelProducer() }
 
     LaunchedEffect(points) {
         if (points.size >= 2) {
@@ -37,8 +39,8 @@ fun RatingHistoryChart(points: List<Double>, modifier: Modifier = Modifier) {
     CartesianChartHost(
         chart = rememberCartesianChart(
             rememberLineCartesianLayer(),
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(),
+            startAxis = VerticalAxis.rememberStart(),
+            bottomAxis = HorizontalAxis.rememberBottom(),
         ),
         modelProducer = modelProducer,
         modifier = modifier

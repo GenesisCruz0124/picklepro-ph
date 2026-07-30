@@ -5,6 +5,7 @@ import com.gentech.picklepro.data.remote.SupabaseModule
 import io.github.jan.supabase.functions.functions
 import io.github.jan.supabase.postgrest.postgrest
 import io.github.jan.supabase.postgrest.query.Columns
+import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.ktor.client.call.body
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -21,7 +22,7 @@ data class RedeemCodeResponse(
 )
 
 @Serializable
-private data class IdOnly(val id: String)
+private data class ActivationCodeIdRow(val id: String)
 
 /** Activation-code redemption + credit tracking (spec §5.1). */
 class OrganizerRepository(context: Context) {
@@ -39,9 +40,9 @@ class OrganizerRepository(context: Context) {
                 filter {
                     eq("redeemed_by", organizerId)
                     eq("status", "redeemed")
-                    isNull("consumed_by_tournament")
+                    filter("consumed_by_tournament", FilterOperator.IS, "null")
                 }
             }
-            .decodeList<IdOnly>()
+            .decodeList<ActivationCodeIdRow>()
             .size
 }
