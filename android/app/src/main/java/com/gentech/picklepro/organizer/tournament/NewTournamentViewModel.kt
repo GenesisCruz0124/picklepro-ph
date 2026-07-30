@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gentech.picklepro.R
 import com.gentech.picklepro.data.remote.dto.CreateTournamentRequest
 import com.gentech.picklepro.data.repository.AuthRepository
 import com.gentech.picklepro.data.repository.OrganizerRepository
@@ -28,6 +29,7 @@ data class NewTournamentUiState(
 )
 
 class NewTournamentViewModel(
+    private val context: Context,
     private val tournamentRepository: TournamentRepository,
     private val organizerRepository: OrganizerRepository,
     private val organizerId: String,
@@ -54,7 +56,7 @@ class NewTournamentViewModel(
     fun submit() {
         val state = _uiState.value
         if (state.name.isBlank()) {
-            _uiState.update { it.copy(errorMessage = "Kailangan ng pangalan ng tournament.") }
+            _uiState.update { it.copy(errorMessage = context.getString(R.string.tournament_error_missing_name)) }
             return
         }
         viewModelScope.launch {
@@ -77,16 +79,16 @@ class NewTournamentViewModel(
                     _uiState.update { it.copy(isLoading = false, errorMessage = mapError(response.error)) }
                 }
             } catch (t: Throwable) {
-                _uiState.update { it.copy(isLoading = false, errorMessage = "May problema. Subukan ulit.") }
+                _uiState.update { it.copy(isLoading = false, errorMessage = context.getString(R.string.common_error_generic)) }
             }
         }
     }
 
     private fun mapError(error: String?): String = when (error) {
-        "no_credits" -> "Wala kang tournament credit. Pumunta sa Wallet."
-        "credit_conflict_retry" -> "May kasabay na request. Subukan ulit."
-        "account_suspended" -> "Suspended ang account mo. I-contact si admin."
-        else -> "May problema. Subukan ulit."
+        "no_credits" -> context.getString(R.string.tournament_no_credits)
+        "credit_conflict_retry" -> context.getString(R.string.tournament_error_credit_conflict)
+        "account_suspended" -> context.getString(R.string.organizer_error_account_suspended)
+        else -> context.getString(R.string.common_error_generic)
     }
 }
 
@@ -96,6 +98,7 @@ class NewTournamentViewModelFactory(private val appContext: Context) : ViewModel
             ?: error("NewTournamentViewModel requires a signed-in user")
         @Suppress("UNCHECKED_CAST")
         return NewTournamentViewModel(
+            context = appContext,
             tournamentRepository = TournamentRepository(appContext),
             organizerRepository = OrganizerRepository(appContext),
             organizerId = userId,

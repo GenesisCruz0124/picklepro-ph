@@ -150,10 +150,10 @@ private fun SeedRow(
             Text(text = "#$seedNumber  $name  (${"%.1f".format(rating)})")
             Row {
                 IconButton(onClick = onMoveUp, enabled = canMoveUp) {
-                    Icon(Icons.Filled.KeyboardArrowUp, contentDescription = null)
+                    Icon(Icons.Filled.KeyboardArrowUp, contentDescription = stringResource(R.string.bracket_seed_move_up))
                 }
                 IconButton(onClick = onMoveDown, enabled = canMoveDown) {
-                    Icon(Icons.Filled.KeyboardArrowDown, contentDescription = null)
+                    Icon(Icons.Filled.KeyboardArrowDown, contentDescription = stringResource(R.string.bracket_seed_move_down))
                 }
             }
         }

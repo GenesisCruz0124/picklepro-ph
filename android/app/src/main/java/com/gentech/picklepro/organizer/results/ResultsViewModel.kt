@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gentech.picklepro.R
 import com.gentech.picklepro.data.remote.dto.DivisionDto
 import com.gentech.picklepro.data.repository.DivisionRepository
 import com.gentech.picklepro.data.repository.DivisionResults
@@ -27,6 +28,7 @@ data class ResultsUiState(
 
 /** Tabulation & results per division (spec §5.8). */
 class ResultsViewModel(
+    private val context: Context,
     private val divisionId: String,
     private val divisionRepository: DivisionRepository,
     private val registrationRepository: RegistrationRepository,
@@ -63,7 +65,7 @@ class ResultsViewModel(
                     )
                 }
             } catch (t: Throwable) {
-                _uiState.update { it.copy(isLoading = false, errorMessage = "Hindi ma-load ang resulta.") }
+                _uiState.update { it.copy(isLoading = false, errorMessage = context.getString(R.string.results_error_load_failed)) }
             }
         }
     }
@@ -73,7 +75,7 @@ class ResultsViewModel(
             _uiState.update { it.copy(isTogglingPublish = true, errorMessage = null) }
             runCatching { divisionRepository.setPublished(divisionId, published) }
                 .onFailure {
-                    _uiState.update { s -> s.copy(errorMessage = "Hindi na-update ang publish status.") }
+                    _uiState.update { s -> s.copy(errorMessage = context.getString(R.string.results_error_publish_failed)) }
                 }
             _uiState.update { it.copy(isTogglingPublish = false) }
             refresh()
@@ -88,6 +90,7 @@ class ResultsViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         return ResultsViewModel(
+            context = appContext,
             divisionId = divisionId,
             divisionRepository = DivisionRepository(appContext),
             registrationRepository = RegistrationRepository(appContext),

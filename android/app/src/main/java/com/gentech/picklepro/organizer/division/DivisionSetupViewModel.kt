@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gentech.picklepro.R
 import com.gentech.picklepro.data.remote.dto.DivisionDto
 import com.gentech.picklepro.data.remote.dto.DivisionUpsertDto
 import com.gentech.picklepro.data.repository.DivisionRepository
@@ -41,6 +42,7 @@ data class DivisionSetupUiState(
 private val AGE_BRACKETS = listOf("19+", "35+", "50+", "60+")
 
 class DivisionSetupViewModel(
+    private val context: Context,
     private val tournamentId: String,
     private val divisionRepository: DivisionRepository,
 ) : ViewModel() {
@@ -92,7 +94,7 @@ class DivisionSetupViewModel(
     fun saveForm() {
         val form = _uiState.value.form ?: return
         if (form.name.isBlank()) {
-            _uiState.update { it.copy(errorMessage = "Kailangan ng pangalan ng division.") }
+            _uiState.update { it.copy(errorMessage = context.getString(R.string.division_error_missing_name)) }
             return
         }
         val payload = DivisionUpsertDto(
@@ -121,7 +123,7 @@ class DivisionSetupViewModel(
                 _uiState.update { it.copy(isSaving = false, form = null) }
                 refresh()
             } catch (t: Throwable) {
-                _uiState.update { it.copy(isSaving = false, errorMessage = "Hindi na-save. Subukan ulit.") }
+                _uiState.update { it.copy(isSaving = false, errorMessage = context.getString(R.string.common_error_save_failed)) }
             }
         }
     }
@@ -132,7 +134,7 @@ class DivisionSetupViewModel(
                 divisionRepository.delete(divisionId)
                 refresh()
             } catch (t: Throwable) {
-                _uiState.update { it.copy(errorMessage = "Hindi na-alis. Subukan ulit.") }
+                _uiState.update { it.copy(errorMessage = context.getString(R.string.division_error_delete_failed)) }
             }
         }
     }
@@ -144,6 +146,6 @@ class DivisionSetupViewModelFactory(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
-        return DivisionSetupViewModel(tournamentId, DivisionRepository(appContext)) as T
+        return DivisionSetupViewModel(appContext, tournamentId, DivisionRepository(appContext)) as T
     }
 }

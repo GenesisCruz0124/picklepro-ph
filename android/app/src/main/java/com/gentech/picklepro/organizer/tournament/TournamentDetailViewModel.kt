@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gentech.picklepro.R
 import com.gentech.picklepro.data.remote.dto.TournamentDto
 import com.gentech.picklepro.data.remote.dto.TournamentUpdateDto
 import com.gentech.picklepro.data.repository.TournamentRepository
@@ -29,6 +30,7 @@ data class TournamentDetailUiState(
 )
 
 class TournamentDetailViewModel(
+    private val context: Context,
     private val tournamentId: String,
     private val tournamentRepository: TournamentRepository,
 ) : ViewModel() {
@@ -59,7 +61,7 @@ class TournamentDetailViewModel(
                     )
                 }
             } catch (t: Throwable) {
-                _uiState.update { it.copy(isLoading = false, errorMessage = "Hindi ma-load ang tournament.") }
+                _uiState.update { it.copy(isLoading = false, errorMessage = context.getString(R.string.tournament_error_load_failed)) }
             }
         }
     }
@@ -91,7 +93,7 @@ class TournamentDetailViewModel(
                 )
                 refresh()
             } catch (t: Throwable) {
-                _uiState.update { it.copy(isSaving = false, errorMessage = "Hindi na-save. Subukan ulit.") }
+                _uiState.update { it.copy(isSaving = false, errorMessage = context.getString(R.string.common_error_save_failed)) }
             }
         }
     }
@@ -105,7 +107,7 @@ class TournamentDetailViewModel(
                 tournamentRepository.advanceStatus(tournamentId, next)
                 refresh()
             } catch (t: Throwable) {
-                _uiState.update { it.copy(isSaving = false, errorMessage = "Hindi na-update ang status.") }
+                _uiState.update { it.copy(isSaving = false, errorMessage = context.getString(R.string.tournament_error_status_update_failed)) }
             }
         }
     }
@@ -117,7 +119,7 @@ class TournamentDetailViewModel(
                 tournamentRepository.uploadLogo(tournamentId, bytes, fileExtension)
                 refresh()
             } catch (t: Throwable) {
-                _uiState.update { it.copy(errorMessage = "Hindi na-upload ang logo.") }
+                _uiState.update { it.copy(errorMessage = context.getString(R.string.tournament_error_logo_upload_failed)) }
             } finally {
                 _uiState.update { it.copy(isUploadingLogo = false) }
             }
@@ -131,6 +133,6 @@ class TournamentDetailViewModelFactory(
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
-        return TournamentDetailViewModel(tournamentId, TournamentRepository(appContext)) as T
+        return TournamentDetailViewModel(appContext, tournamentId, TournamentRepository(appContext)) as T
     }
 }

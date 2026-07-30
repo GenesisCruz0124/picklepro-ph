@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gentech.picklepro.R
 import com.gentech.picklepro.data.remote.dto.DivisionDto
 import com.gentech.picklepro.data.repository.DivisionRepository
 import com.gentech.picklepro.data.repository.RegisterOutcome
@@ -24,6 +25,7 @@ data class ManualAddUiState(
 
 /** Manual add (spec §5.4): name + declared tier -> shell player, registered into the division. */
 class ManualAddViewModel(
+    private val context: Context,
     private val divisionId: String,
     private val divisionRepository: DivisionRepository,
     private val shellPlayerRepository: ShellPlayerRepository,
@@ -72,7 +74,7 @@ class ManualAddViewModel(
                 _uiState.update { it.copy(isLoading = false, outcome = ui, name = "") }
             } catch (t: Throwable) {
                 _uiState.update {
-                    it.copy(isLoading = false, outcome = ScanOutcomeUi.Error("May problema. Subukan ulit."))
+                    it.copy(isLoading = false, outcome = ScanOutcomeUi.Error(context.getString(R.string.common_error_generic)))
                 }
             }
         }
@@ -88,6 +90,7 @@ class ManualAddViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         return ManualAddViewModel(
+            context = appContext,
             divisionId = divisionId,
             divisionRepository = DivisionRepository(appContext),
             shellPlayerRepository = ShellPlayerRepository(appContext),

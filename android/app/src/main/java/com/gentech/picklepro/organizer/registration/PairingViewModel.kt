@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gentech.picklepro.R
 import com.gentech.picklepro.data.remote.dto.RegistrationWithProfileDto
 import com.gentech.picklepro.data.repository.RegistrationRepository
 import com.gentech.picklepro.data.repository.TeamRepository
@@ -23,6 +24,7 @@ data class PairingUiState(
 
 /** Doubles/mixed pairing (spec §5.4): pairs two unpaired registrations into a team. */
 class PairingViewModel(
+    private val context: Context,
     private val divisionId: String,
     private val registrationRepository: RegistrationRepository,
     private val teamRepository: TeamRepository,
@@ -64,7 +66,7 @@ class PairingViewModel(
                 teamRepository.pair(divisionId, r1.id, r1.playerId, r2.id, r2.playerId)
                 refresh()
             } catch (t: Throwable) {
-                _uiState.update { it.copy(errorMessage = "Hindi na-pair. Subukan ulit.") }
+                _uiState.update { it.copy(errorMessage = context.getString(R.string.pairing_error_pair_failed)) }
             }
         }
     }
@@ -75,7 +77,7 @@ class PairingViewModel(
                 teamRepository.unpair(teamId)
                 refresh()
             } catch (t: Throwable) {
-                _uiState.update { it.copy(errorMessage = "Hindi na-unpair. Subukan ulit.") }
+                _uiState.update { it.copy(errorMessage = context.getString(R.string.pairing_error_unpair_failed)) }
             }
         }
     }
@@ -88,6 +90,7 @@ class PairingViewModelFactory(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         return PairingViewModel(
+            context = appContext,
             divisionId = divisionId,
             registrationRepository = RegistrationRepository(appContext),
             teamRepository = TeamRepository(appContext),
