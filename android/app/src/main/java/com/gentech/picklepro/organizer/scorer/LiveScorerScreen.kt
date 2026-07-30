@@ -198,10 +198,9 @@ private fun TeamPanel(
     onTap: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val handleTap: () -> Unit = if (canTapToScore) onTap else {}
     Card(
         modifier = modifier.fillMaxSize(),
-        onClick = handleTap,
+        onClick = { if (canTapToScore) onTap() },
     ) {
         Column(
             modifier = Modifier

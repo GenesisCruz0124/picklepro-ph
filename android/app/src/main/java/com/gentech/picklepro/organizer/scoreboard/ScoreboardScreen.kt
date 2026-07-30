@@ -42,7 +42,8 @@ private tailrec fun Context.findActivity(): Activity? = when (this) {
 @Composable
 fun ScoreboardScreen(viewModel: ScoreboardViewModel) {
     val state by viewModel.uiState.collectAsState()
-    val activity = remember(LocalContext.current) { LocalContext.current.findActivity() }
+    val context = LocalContext.current
+    val activity = remember(context) { context.findActivity() }
     val view = LocalView.current
 
     DisposableEffect(activity) {
