@@ -3,6 +3,7 @@
     <string name="app_name">PicklePro PH</string>
 
     <!-- Common -->
+    <string name="common_back">Bumalik</string>
     <string name="common_loading">Naglo-load…</string>
     <string name="common_retry">Ulitin</string>
     <string name="common_cancel">Kanselahin</string>

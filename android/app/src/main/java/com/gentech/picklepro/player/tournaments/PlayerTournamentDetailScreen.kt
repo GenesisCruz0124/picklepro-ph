@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -22,68 +23,66 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gentech.picklepro.R
+import com.gentech.picklepro.core.designsystem.PickleProTopBar
 import com.gentech.picklepro.data.remote.dto.DivisionDto
 import com.gentech.picklepro.organizer.common.tournamentStatusLabelRes
 
 @Composable
-fun PlayerTournamentDetailScreen(viewModel: PlayerTournamentDetailViewModel) {
+fun PlayerTournamentDetailScreen(viewModel: PlayerTournamentDetailViewModel, onBack: () -> Unit) {
     val state by viewModel.uiState.collectAsState()
     val tournament = state.tournament
 
-    if (state.isLoading || tournament == null) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            CircularProgressIndicator()
+    Scaffold(
+        topBar = { PickleProTopBar(tournament?.name ?: stringResource(R.string.tournaments_title), onBack) },
+    ) { padding ->
+        if (state.isLoading || tournament == null) {
+            Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            return@Scaffold
         }
-        return
-    }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(tournament.name, style = MaterialTheme.typography.headlineMedium)
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            item {
                 Text(stringResource(tournamentStatusLabelRes(tournament.status)), style = MaterialTheme.typography.labelLarge)
             }
-        }
-        tournament.venue?.takeIf { it.isNotBlank() }?.let {
-            item { Text(it, style = MaterialTheme.typography.bodyLarge) }
-        }
-        item {
-            val dates = listOfNotNull(tournament.startDate, tournament.endDate).distinct().joinToString(" – ")
-            if (dates.isNotBlank()) Text(dates, style = MaterialTheme.typography.bodyMedium)
-        }
-        tournament.entryFeeNote?.takeIf { it.isNotBlank() }?.let {
-            item { Text(it, style = MaterialTheme.typography.bodyMedium) }
-        }
-        if (state.organizerName.isNotBlank()) {
+            tournament.venue?.takeIf { it.isNotBlank() }?.let {
+                item { Text(it, style = MaterialTheme.typography.bodyLarge) }
+            }
             item {
-                Text(
-                    "${stringResource(R.string.player_tournament_organizer_label)}: ${state.organizerName}",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                val dates = listOfNotNull(tournament.startDate, tournament.endDate).distinct().joinToString(" – ")
+                if (dates.isNotBlank()) Text(dates, style = MaterialTheme.typography.bodyMedium)
+            }
+            tournament.entryFeeNote?.takeIf { it.isNotBlank() }?.let {
+                item { Text(it, style = MaterialTheme.typography.bodyMedium) }
+            }
+            if (state.organizerName.isNotBlank()) {
+                item {
+                    Text(
+                        "${stringResource(R.string.player_tournament_organizer_label)}: ${state.organizerName}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+            tournament.description?.takeIf { it.isNotBlank() }?.let {
+                item { Text(it, style = MaterialTheme.typography.bodyMedium) }
+            }
+
+            item {
+                Text(stringResource(R.string.player_tournament_divisions_title), style = MaterialTheme.typography.titleLarge)
+            }
+            items(state.divisions, key = { it.id }) { division ->
+                DivisionCard(
+                    division = division,
+                    registeredCount = state.registeredCountByDivision[division.id] ?: 0,
+                    published = state.resultsByDivision[division.id],
                 )
             }
-        }
-        tournament.description?.takeIf { it.isNotBlank() }?.let {
-            item { Text(it, style = MaterialTheme.typography.bodyMedium) }
-        }
-
-        item {
-            Text(stringResource(R.string.player_tournament_divisions_title), style = MaterialTheme.typography.titleLarge)
-        }
-        items(state.divisions, key = { it.id }) { division ->
-            DivisionCard(
-                division = division,
-                registeredCount = state.registeredCountByDivision[division.id] ?: 0,
-                published = state.resultsByDivision[division.id],
-            )
         }
     }
 }

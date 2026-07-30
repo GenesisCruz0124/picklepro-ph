@@ -2,6 +2,7 @@ package com.gentech.picklepro.organizer.certificates
 
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,9 +27,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import com.gentech.picklepro.R
+import com.gentech.picklepro.core.designsystem.PickleProTopBar
 
 @Composable
-fun CertificatesScreen(viewModel: CertificatesViewModel) {
+fun CertificatesScreen(viewModel: CertificatesViewModel, onBack: () -> Unit) {
     val state by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
@@ -50,57 +53,39 @@ fun CertificatesScreen(viewModel: CertificatesViewModel) {
         viewModel.onShared()
     }
 
-    if (state.isLoading) {
-        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
-            CircularProgressIndicator(modifier = Modifier.padding(24.dp))
-        }
-        return
-    }
-
     fun kindLabelFor(kind: CertificateKind): String = when (kind) {
         CertificateKind.CHAMPION -> championLabel
         CertificateKind.RUNNER_UP -> runnerUpLabel
         CertificateKind.PARTICIPATION -> participationLabel
     }
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        item {
-            Text(stringResource(R.string.certificates_title), style = MaterialTheme.typography.headlineMedium)
-        }
-        item {
-            Text(
-                stringResource(R.string.certificates_hint),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        state.errorMessage?.let { message ->
-            item { Text(message, color = MaterialTheme.colorScheme.error) }
+    Scaffold(
+        topBar = { PickleProTopBar(stringResource(R.string.certificates_title), onBack) },
+    ) { padding ->
+        if (state.isLoading) {
+            Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            return@Scaffold
         }
 
-        items(state.podiumItems, key = { "${it.kind}-${it.recipientRef}" }) { item ->
-            CertificateRow(
-                item = item,
-                kindLabel = kindLabelFor(item.kind),
-                isGenerating = state.generatingRef == item.recipientRef,
-                onGenerate = {
-                    viewModel.generate(item, kindLabelFor(item.kind), awardedToLabel, organizedByLabel)
-                },
-            )
-        }
-
-        if (state.participationItems.isNotEmpty()) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
             item {
                 Text(
-                    stringResource(R.string.certificates_participation_section),
-                    style = MaterialTheme.typography.titleLarge,
+                    stringResource(R.string.certificates_hint),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            items(state.participationItems, key = { "${it.kind}-${it.recipientRef}" }) { item ->
+            state.errorMessage?.let { message ->
+                item { Text(message, color = MaterialTheme.colorScheme.error) }
+            }
+
+            items(state.podiumItems, key = { "${it.kind}-${it.recipientRef}" }) { item ->
                 CertificateRow(
                     item = item,
                     kindLabel = kindLabelFor(item.kind),
@@ -109,6 +94,25 @@ fun CertificatesScreen(viewModel: CertificatesViewModel) {
                         viewModel.generate(item, kindLabelFor(item.kind), awardedToLabel, organizedByLabel)
                     },
                 )
+            }
+
+            if (state.participationItems.isNotEmpty()) {
+                item {
+                    Text(
+                        stringResource(R.string.certificates_participation_section),
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                }
+                items(state.participationItems, key = { "${it.kind}-${it.recipientRef}" }) { item ->
+                    CertificateRow(
+                        item = item,
+                        kindLabel = kindLabelFor(item.kind),
+                        isGenerating = state.generatingRef == item.recipientRef,
+                        onGenerate = {
+                            viewModel.generate(item, kindLabelFor(item.kind), awardedToLabel, organizedByLabel)
+                        },
+                    )
+                }
             }
         }
     }

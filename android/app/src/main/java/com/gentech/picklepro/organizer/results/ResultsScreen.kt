@@ -1,6 +1,7 @@
 package com.gentech.picklepro.organizer.results
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,6 +14,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,96 +25,98 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gentech.picklepro.R
+import com.gentech.picklepro.core.designsystem.PickleProTopBar
 import com.gentech.picklepro.data.repository.StandingsRow
 
 @Composable
 fun ResultsScreen(
     viewModel: ResultsViewModel,
     onOpenCertificates: () -> Unit,
+    onBack: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsState()
     val division = state.division
     val results = state.results
 
-    if (state.isLoading || division == null || results == null) {
-        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
-            CircularProgressIndicator(modifier = Modifier.padding(24.dp))
-        }
-        return
-    }
+    val resultsTitle = stringResource(R.string.results_title)
+    val title = if (division != null) "$resultsTitle — ${division.name}" else resultsTitle
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        item {
-            Text(
-                "${stringResource(R.string.results_title)} — ${division.name}",
-                style = MaterialTheme.typography.headlineMedium,
-            )
+    Scaffold(
+        topBar = { PickleProTopBar(title, onBack) },
+    ) { padding ->
+        if (state.isLoading || division == null || results == null) {
+            Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            return@Scaffold
         }
 
-        state.errorMessage?.let { message ->
-            item { Text(message, color = MaterialTheme.colorScheme.error) }
-        }
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            state.errorMessage?.let { message ->
+                item { Text(message, color = MaterialTheme.colorScheme.error) }
+            }
 
-        if (results.standings.isEmpty() && results.championRef == null) {
-            item { Text(stringResource(R.string.results_no_matches), style = MaterialTheme.typography.bodyMedium) }
-        } else {
-            if (!results.isComplete) {
-                item {
-                    Text(
-                        stringResource(R.string.results_incomplete_note),
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
+            if (results.standings.isEmpty() && results.championRef == null) {
+                item { Text(stringResource(R.string.results_no_matches), style = MaterialTheme.typography.bodyMedium) }
+            } else {
+                if (!results.isComplete) {
+                    item {
+                        Text(
+                            stringResource(R.string.results_incomplete_note),
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
                 }
-            }
 
-            results.championRef?.let { ref ->
-                item { PodiumCard(R.string.results_champion, state.nameByRef[ref] ?: "?") }
-            }
-            results.runnerUpRef?.let { ref ->
-                item { PodiumCard(R.string.results_runner_up, state.nameByRef[ref] ?: "?") }
-            }
-            results.thirdPlaceRef?.let { ref ->
-                item { PodiumCard(R.string.results_third_place, state.nameByRef[ref] ?: "?") }
+                results.championRef?.let { ref ->
+                    item { PodiumCard(R.string.results_champion, state.nameByRef[ref] ?: "?") }
+                }
+                results.runnerUpRef?.let { ref ->
+                    item { PodiumCard(R.string.results_runner_up, state.nameByRef[ref] ?: "?") }
+                }
+                results.thirdPlaceRef?.let { ref ->
+                    item { PodiumCard(R.string.results_third_place, state.nameByRef[ref] ?: "?") }
+                }
+
+                item {
+                    Text(stringResource(R.string.bracket_standings_title), style = MaterialTheme.typography.titleLarge)
+                }
+                items(results.standings, key = { it.entrantRef }) { row ->
+                    StandingsLine(row)
+                }
             }
 
             item {
-                Text(stringResource(R.string.bracket_standings_title), style = MaterialTheme.typography.titleLarge)
-            }
-            items(results.standings, key = { it.entrantRef }) { row ->
-                StandingsLine(row)
-            }
-        }
-
-        item {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(stringResource(R.string.results_publish_label), style = MaterialTheme.typography.titleLarge)
-                    Text(
-                        stringResource(R.string.results_publish_hint),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(stringResource(R.string.results_publish_label), style = MaterialTheme.typography.titleLarge)
+                        Text(
+                            stringResource(R.string.results_publish_hint),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Switch(
+                        checked = division.published,
+                        onCheckedChange = viewModel::setPublished,
+                        enabled = !state.isTogglingPublish,
                     )
                 }
-                Switch(
-                    checked = division.published,
-                    onCheckedChange = viewModel::setPublished,
-                    enabled = !state.isTogglingPublish,
-                )
             }
-        }
 
-        item {
-            OutlinedButton(onClick = onOpenCertificates, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.results_certificates_button))
+            item {
+                OutlinedButton(onClick = onOpenCertificates, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.results_certificates_button))
+                }
             }
         }
     }

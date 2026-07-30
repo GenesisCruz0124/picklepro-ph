@@ -1,6 +1,7 @@
 package com.gentech.picklepro.organizer.bracket
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -21,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gentech.picklepro.R
+import com.gentech.picklepro.core.designsystem.PickleProTopBar
 import com.gentech.picklepro.data.remote.dto.BracketMatchDto
 import com.gentech.picklepro.data.repository.StandingsRow
 
@@ -28,45 +31,46 @@ import com.gentech.picklepro.data.repository.StandingsRow
 fun BracketViewScreen(
     viewModel: BracketViewViewModel,
     onOpenMatch: (matchId: String) -> Unit,
+    onBack: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsState()
 
-    if (state.isLoading) {
-        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
-            CircularProgressIndicator(modifier = Modifier.padding(24.dp))
-        }
-        return
-    }
-
-    val isRoundRobin = state.division?.format == "round_robin"
-
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        item {
-            Text(stringResource(R.string.bracket_view_title), style = MaterialTheme.typography.headlineMedium)
+    Scaffold(
+        topBar = { PickleProTopBar(stringResource(R.string.bracket_view_title), onBack) },
+    ) { padding ->
+        if (state.isLoading) {
+            Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator()
+            }
+            return@Scaffold
         }
 
-        state.matchesByRound.toSortedMap().forEach { (round, matches) ->
-            item {
-                Text(
-                    stringResource(R.string.bracket_round_label, round),
-                    style = MaterialTheme.typography.titleLarge,
-                )
-            }
-            items(matches.sortedBy { it.position }, key = { it.id }) { match ->
-                BracketMatchRow(match, state.nameByRef, onClick = { onOpenMatch(match.id) })
-            }
-        }
+        val isRoundRobin = state.division?.format == "round_robin"
 
-        if (isRoundRobin) {
-            item {
-                Text(stringResource(R.string.bracket_standings_title), style = MaterialTheme.typography.headlineMedium)
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            state.matchesByRound.toSortedMap().forEach { (round, matches) ->
+                item {
+                    Text(
+                        stringResource(R.string.bracket_round_label, round),
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                }
+                items(matches.sortedBy { it.position }, key = { it.id }) { match ->
+                    BracketMatchRow(match, state.nameByRef, onClick = { onOpenMatch(match.id) })
+                }
             }
-            items(state.standings, key = { it.entrantRef }) { row ->
-                StandingsRowView(row)
+
+            if (isRoundRobin) {
+                item {
+                    Text(stringResource(R.string.bracket_standings_title), style = MaterialTheme.typography.headlineMedium)
+                }
+                items(state.standings, key = { it.entrantRef }) { row ->
+                    StandingsRowView(row)
+                }
             }
         }
     }

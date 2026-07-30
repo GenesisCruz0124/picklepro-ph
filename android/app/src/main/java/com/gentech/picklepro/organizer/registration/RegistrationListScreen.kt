@@ -15,6 +15,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.gentech.picklepro.R
+import com.gentech.picklepro.core.designsystem.PickleProTopBar
 import com.gentech.picklepro.data.remote.dto.RegistrationWithProfileDto
 
 @Composable
@@ -34,56 +36,58 @@ fun RegistrationListScreen(
     onScanQr: () -> Unit,
     onManualAdd: () -> Unit,
     onPairing: () -> Unit,
+    onBack: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsState()
     val isSingles = state.division?.eventType == "singles"
 
-    LazyColumn(
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        item {
-            Text(stringResource(R.string.registration_list_title), style = MaterialTheme.typography.headlineMedium)
-        }
-        item {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                OutlinedButton(onClick = onScanQr, modifier = Modifier.weight(1f)) {
-                    Text(stringResource(R.string.registration_scan_qr_button))
-                }
-                OutlinedButton(onClick = onManualAdd, modifier = Modifier.weight(1f)) {
-                    Text(stringResource(R.string.registration_manual_add_nav_button))
-                }
-            }
-        }
-        if (!isSingles) {
+    Scaffold(
+        topBar = { PickleProTopBar(stringResource(R.string.registration_list_title), onBack) },
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier.fillMaxSize().padding(padding),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
             item {
-                OutlinedButton(onClick = onPairing, modifier = Modifier.fillMaxWidth()) {
-                    Text(stringResource(R.string.registration_pairing_button))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
+                    OutlinedButton(onClick = onScanQr, modifier = Modifier.weight(1f)) {
+                        Text(stringResource(R.string.registration_scan_qr_button))
+                    }
+                    OutlinedButton(onClick = onManualAdd, modifier = Modifier.weight(1f)) {
+                        Text(stringResource(R.string.registration_manual_add_nav_button))
+                    }
                 }
             }
-        }
-        item {
-            OutlinedTextField(
-                value = state.searchQuery,
-                onValueChange = viewModel::onSearchChange,
-                label = { Text(stringResource(R.string.registration_search_hint)) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-            )
-        }
-        if (state.isLoading) {
-            item { CircularProgressIndicator() }
-        } else if (state.filtered.isEmpty()) {
-            item { Text(stringResource(R.string.registration_empty), style = MaterialTheme.typography.bodyMedium) }
-        } else {
-            items(state.filtered, key = { it.id }) { registration ->
-                RegistrationRow(
-                    registration = registration,
-                    isDoublesDivision = !isSingles,
-                    onToggleCheckIn = { checked -> viewModel.toggleCheckIn(registration.id, checked) },
-                    onUnregister = { viewModel.unregister(registration.id) },
+            if (!isSingles) {
+                item {
+                    OutlinedButton(onClick = onPairing, modifier = Modifier.fillMaxWidth()) {
+                        Text(stringResource(R.string.registration_pairing_button))
+                    }
+                }
+            }
+            item {
+                OutlinedTextField(
+                    value = state.searchQuery,
+                    onValueChange = viewModel::onSearchChange,
+                    label = { Text(stringResource(R.string.registration_search_hint)) },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
                 )
+            }
+            if (state.isLoading) {
+                item { CircularProgressIndicator() }
+            } else if (state.filtered.isEmpty()) {
+                item { Text(stringResource(R.string.registration_empty), style = MaterialTheme.typography.bodyMedium) }
+            } else {
+                items(state.filtered, key = { it.id }) { registration ->
+                    RegistrationRow(
+                        registration = registration,
+                        isDoublesDivision = !isSingles,
+                        onToggleCheckIn = { checked -> viewModel.toggleCheckIn(registration.id, checked) },
+                        onUnregister = { viewModel.unregister(registration.id) },
+                    )
+                }
             }
         }
     }
