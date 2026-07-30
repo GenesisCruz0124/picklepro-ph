@@ -1,0 +1,27 @@
+# Supabase local dev
+supabase/.temp/
+supabase/.branches/
+.env
+.env.*
+!.env.example
+
+# Admin web
+admin-web/node_modules/
+admin-web/dist/
+
+# Android (M2+)
+*.apk
+*.aab
+local.properties
+.gradle/
+build/
+captures/
+.cxx/
+keystore/
+*.keystore
+*.jks
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store

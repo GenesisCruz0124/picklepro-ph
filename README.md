@@ -1,1 +1,183 @@
-# picklepro-ph
+# PicklePro PH
+
+Pickleball tournament management platform for the Philippine market.
+
+**Spec:** [`docs/2026-07-24-picklepro-ph-mvp-spec.md`](docs/2026-07-24-picklepro-ph-mvp-spec.md)
+
+| Surface | Platform | Status |
+|---|---|---|
+| PicklePro PH app (players + organizers) | Android — Kotlin, Jetpack Compose, MVVM | **M8 ✅ — v1.0.0** (full Phase 1 feature set; release signing + CI release workflow in place) |
+| PicklePro PH Admin | Web — Vite + React + TS + Tailwind (Vercel) | **M7 ✅** (codes, organizers, sandbag queue, DUPR verify, stats) |
+| Backend | Supabase — Auth, Postgres + RLS, Storage, Edge Functions | **M1 ✅** |
+
+## Repository layout
+
+```
+docs/       Product spec, reference documents, release notes
+prompts/    Per-milestone plan files (plan-first workflow, spec §10)
+.github/workflows/release.yml  Tag-triggered signed-APK release (spec §10.5)
+supabase/
+  migrations/   Postgres schema, functions/triggers, RLS policies
+  functions/    Edge Functions (Deno):
+    redeem-code             activation code → organizer role
+    consume-code-on-create  consume 1 code credit + create tournament
+    process-match-result    idempotent Elo + rating history + sandbag flags
+    claim-shell-profile     claim a manually-added shell player
+android/    Kotlin/Jetpack Compose app (Gradle project)
+  app/src/main/java/com/gentech/picklepro/
+    core/        design system, Taglish strings, QR encode/decode, rating tiers,
+                 scoring engine, nav
+    auth/        signup + login (screens, ViewModel)
+    player/      profile, my QR, tournaments browse + detail (screens, ViewModels)
+    organizer/   activation, wallet, dashboard, tournament + division setup,
+                 registration, brackets, live scorer, scoreboard, results,
+                 certificates
+    data/        Room cache (incl. offline-first match_cache + pending_ops),
+                 Supabase client + DTOs, repositories, sync (WorkManager), DataStore
+admin-web/  Vite + React + TS + Tailwind admin app (Vercel deploy target)
+  src/
+    auth/        login, session context, admin route guard
+    pages/       Stats, Activation Codes, Organizers, Sandbag Queue, DUPR Verify
+    components/  layout + TanStack Table wrapper
+    lib/         Supabase client, code generator, CSV export
+```
+
+## Backend (M1)
+
+Apply migrations and deploy functions with the Supabase CLI:
+
+```sh
+supabase link --project-ref <project-ref>
+supabase db push
+supabase functions deploy redeem-code consume-code-on-create process-match-result claim-shell-profile
+```
+
+Key backend rules:
+
+- **Ratings** — Elo per event type (singles/doubles/mixed); display scale `2.0 + (elo − 800)/400` clamped 2.0–8.0; K = 64 for the first 10 matches per event type, then 32; doubles use pair-average team rating. All Elo writes happen in `process-match-result` (service role), idempotent per match id.
+- **Monetization** — activation codes: Generated → Sent → Redeemed (binds to organizer) → consumed by one tournament. Redemption/consumption only via Edge Functions.
+- **RLS** — profiles/ratings readable by all authenticated users (transparency); tournament family owned by its organizer; players read once a tournament leaves draft; admin-only tables for codes and sandbag flags.
+
+## Android app (M2–M8)
+
+```sh
+cd android
+cp local.properties.example local.properties   # fill in SUPABASE_URL / SUPABASE_ANON_KEY
+./gradlew assembleDebug
+```
+
+> **No Android SDK in this build environment.** The M2–M8 source and Gradle
+> config were written and reviewed carefully (package/path consistency,
+> string-resource references, and version-catalog wiring were all checked
+> after every milestone), but none of it could be compiled here — run
+> `./gradlew assembleDebug` for real before shipping, to catch any
+> API-level mismatches (Supabase-kt, Vico, CameraX, ML Kit, WorkManager).
+> Every algorithm with no Android dependency (bracket/round-robin
+> generation, the point-by-point scoring engine) *was* independently
+> verified by porting it to Python and testing — see
+> `prompts/2026-07-24-m4-registration-brackets.md` and
+> `prompts/2026-07-24-m5-live-scorer-scoreboard-offline-sync.md` for what
+> that caught, including a real bracket-advancement bug found while
+> building M5. See also
+> `prompts/2026-07-24-m2-android-scaffold-auth-profile-qr.md` and
+> `prompts/2026-07-24-m3-organizer-activation-tournament-division-setup.md`.
+> Before tagging a release, see "What still needs a human/CI" in
+> `prompts/2026-07-24-m8-polish-release.md`.
+
+**M2** — signup (self-declared starting tier, event-type preferences) and
+login against Supabase Auth; player profile (tier badges, Vico rating history
+chart, match history); My QR (offline, ZXing-generated, max-brightness
+toggle). Session persists via DataStore; profile/ratings cache in Room for
+offline viewing.
+
+**M3** — "Become an Organizer" (redeems an activation code), wallet (credit
+count + Messenger buy-more CTA), organizer dashboard (summary cards +
+tournament list), tournament setup (create via credit consumption, edit,
+logo upload, forward-only status control), and division setup (event type,
+skill gate, optional age bracket, scoring config). The Organizer bottom-nav
+tab appears reactively once the profile's cached role becomes organizer.
+
+**M4** — registration via QR scan (CameraX + ML Kit, decoding the same QR
+format My QR generates) or manual add (creates a claimable shell player);
+level-gate and slot validation on every registration; doubles/mixed
+pairing; a per-division registration list with search, check-in toggle,
+and unregister. Bracket generation for Single Elimination (seeded by
+rating, manual reorder, auto-byes, optional bronze match) and Round Robin
+(circle-method schedule, standings with head-to-head/point-diff/points-
+against tiebreakers); generating locks the division, and regeneration is
+blocked once any match has a result. Full offline-first sync (Room +
+`pending_ops` + WorkManager) is deliberately deferred to M5, per the
+milestone table's own pairing of "offline sync" with the live scorer.
+
+**M5** — Live Scorer: event-sourced side-out scoring (doubles 3-number
+call, 0-0-2 start, server 1→2→side-out; singles 2-number, immediate
+side-out) and rally scoring, win-by-2, best-of-N, game/match point
+indicators, end-swap reminder, unbounded UNDO (drop-and-replay, not an
+inverse-op stack), 2/team/game timeouts with a 60s countdown. Room
+(`match_cache`) is the source of truth while scoring — every action
+enqueues a `pending_ops` row that a WorkManager `SyncWorker` flushes to
+Supabase when online (organizer-device-wins: unconditional upsert, never
+a merge), then triggers `process-match-result` for Elo. Bracket
+advancement (winner into the next round's slot) runs as a sync follow-up
+too, since the target match may not be cached on this device yet.
+Scoreboard Display: fullscreen landscape, keep-screen-on, read-only.
+
+**M6** — Results per division: auto-derived champion/runner-up (single
+elim: final's winner + loser, bronze winner as third place; round robin:
+tiebroken standings top 2), full standings, and the publish toggle that
+makes results player-visible (`divisions.published`). A pending-sync
+banner on the organizer dashboard surfaces unsynced `pending_ops` (spec
+§5.10 "rating pending sync"). Certificates: on-device PDF generation
+(`PdfDocument`, landscape A4, no external library) for Champion /
+Runner-Up / Participation with tournament, division, recipient, date,
+organizer name + logo (logo fetch degrades gracefully offline); shared
+via FileProvider + system share sheet, each recorded in `certificates`.
+
+**M8** — Player Tournaments tab: browse all non-draft tournaments (grouped
+Upcoming/Ongoing/Finished, name-or-location search), open one to see its
+divisions and — once an organizer publishes them — podium results, reusing
+M6's `ResultsRepository`. Release infrastructure: `app/build.gradle.kts`
+gained a release `signingConfig` sourced from `android/app/release.keystore`
++ env vars (falls back to debug signing when no keystore is present, so
+local builds keep working); `.github/workflows/release.yml` builds a signed
+APK on every `v*` tag push, renames it `PickleProPH-<tag>.apk`, generates
+release notes from the commit log since the previous tag, and attaches both
+to a GitHub Release. Version bumped to **1.0.0** (`versionCode` 6); see
+`docs/RELEASE-NOTES-v1.0.0.md`.
+
+## Admin web (M7)
+
+```sh
+cd admin-web
+cp .env.example .env.local   # fill in VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY
+npm install
+npm run dev      # or: npm run build  (tsc --noEmit + vite build)
+```
+
+Unlike the Android app, **this build is verified**: `npm run build`
+(strict-mode `tsc --noEmit` + `vite build`) passes in this repo. Sign-in is
+Supabase email+password; the route guard requires the account's
+`profiles.role = 'admin'` — the same condition M1's RLS `is_admin()`
+enforces server-side, so the guard mirrors rather than duplicates the real
+gate (making someone admin = setting their profile role). Pages: Stats
+totals; Activation Codes (single/batch generation, price label/note/free
+flag, mark-sent/revoke, copy, CSV export); Organizers (tournament + code
+counts, suspend/reactivate); Sandbag Review Queue (evidence JSON, dismiss
+or set `ratings.override` + note); DUPR Verifications (proof screenshot,
+verify/reject). "Restrict from tiers" is deferred to the P3 sandbag engine
+— the Phase-1 schema has no tier-restriction field (see the M7 plan file).
+
+Deploy: point Vercel at `admin-web/` with the two `VITE_*` env vars set.
+
+## Phase 1 milestones (spec §10)
+
+| # | Milestone | Status |
+|---|---|---|
+| M1 | Supabase schema + RLS + Edge Functions | ✅ |
+| M2 | Android scaffold + auth + player profile + QR | ✅ |
+| M3 | Organizer activation + tournament/division setup | ✅ |
+| M4 | Registration (QR scan + manual) + brackets (SE + RR) | ✅ |
+| M5 | Live scorer (side-out + rally) + scoreboard + offline sync | ✅ |
+| M6 | Tabulation + Elo processing + certificates | ✅ |
+| M7 | Admin web (codes, organizers, flags, DUPR verify) | ✅ |
+| M8 | Polish + Taglish pass + release `PickleProPH-v1.0.0.apk` | ✅ |
