@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import coil.ImageLoader
 import coil.request.ImageRequest
+import com.gentech.picklepro.R
 import com.gentech.picklepro.data.remote.dto.DivisionDto
 import com.gentech.picklepro.data.remote.dto.TournamentDto
 import com.gentech.picklepro.data.repository.CertificateRepository
@@ -103,7 +104,7 @@ class CertificatesViewModel(
                     )
                 }
             } catch (t: Throwable) {
-                _uiState.update { it.copy(isLoading = false, errorMessage = "Hindi ma-load. Subukan ulit.") }
+                _uiState.update { it.copy(isLoading = false, errorMessage = appContext.getString(R.string.certificates_load_error)) }
             }
         }
     }
@@ -138,7 +139,7 @@ class CertificatesViewModel(
                 _uiState.update { it.copy(generatingRef = null, fileToShare = file) }
             } catch (t: Throwable) {
                 _uiState.update {
-                    it.copy(generatingRef = null, errorMessage = "Hindi na-generate ang certificate. Subukan ulit.")
+                    it.copy(generatingRef = null, errorMessage = appContext.getString(R.string.certificates_error))
                 }
             }
         }

@@ -11,6 +11,7 @@
     <string name="common_edit">I-edit</string>
     <string name="common_error_generic">May problema. Subukan ulit.</string>
     <string name="common_error_network">Walang connection. Subukan ulit.</string>
+    <string name="common_error_save_failed">Hindi na-save. Subukan ulit.</string>
 
     <!-- Navigation -->
     <string name="nav_profile">Profile</string>
@@ -34,6 +35,8 @@
     <string name="auth_error_invalid_credentials">Mali ang email o password.</string>
     <string name="auth_error_email_in_use">Ginagamit na ang email na ito.</string>
     <string name="auth_error_weak_password">Kailangan ng at least 6 characters ang password.</string>
+    <string name="auth_error_missing_credentials">Kailangan ng email at password.</string>
+    <string name="auth_error_missing_name">Kailangan ng pangalan.</string>
     <string name="auth_check_email">I-check ang email mo para i-confirm ang account, tapos mag-sign in.</string>
 
     <!-- Event types (technical/config terms, kept in English per spec §8) -->
@@ -80,6 +83,7 @@
     <string name="organizer_error_code_redeemed">Na-redeem na ang code na ito.</string>
     <string name="organizer_error_code_revoked">Na-revoke na ang code na ito.</string>
     <string name="organizer_error_account_suspended">Suspended ang account mo. I-contact si admin.</string>
+    <string name="organizer_error_missing_code">Kailangan ng code.</string>
 
     <!-- Organizer: wallet -->
     <string name="organizer_wallet_title">Wallet</string>
@@ -115,6 +119,11 @@
     <string name="tournament_create_button">I-create ang Tournament</string>
     <string name="tournament_no_credits">Wala kang tournament credit. Pumunta sa Wallet.</string>
     <string name="tournament_divisions_button">Mga Division</string>
+    <string name="tournament_error_missing_name">Kailangan ng pangalan ng tournament.</string>
+    <string name="tournament_error_credit_conflict">May kasabay na request. Subukan ulit.</string>
+    <string name="tournament_error_load_failed">Hindi ma-load ang tournament.</string>
+    <string name="tournament_error_status_update_failed">Hindi na-update ang status.</string>
+    <string name="tournament_error_logo_upload_failed">Hindi na-upload ang logo.</string>
 
     <!-- Organizer: division setup -->
     <string name="division_setup_title">Mga Division</string>
@@ -144,6 +153,8 @@
     <string name="division_manage_registrations">Mga Registrasyon</string>
     <string name="division_manage_bracket">Bracket</string>
     <string name="division_manage_results">Resulta</string>
+    <string name="division_error_missing_name">Kailangan ng pangalan ng division.</string>
+    <string name="division_error_delete_failed">Hindi na-alis. Subukan ulit.</string>
 
     <!-- Registration -->
     <string name="registration_qr_scan_title">I-scan ang QR</string>
@@ -168,6 +179,7 @@
     <string name="registration_empty">Wala pang naka-register.</string>
     <string name="registration_unpaired_label">Walang Partner</string>
     <string name="registration_shell_badge">Shell</string>
+    <string name="registration_scan_player_not_found">Hindi mahanap ang manlalaro.</string>
 
     <!-- Pairing -->
     <string name="pairing_title">Pagsamahin ang Doubles</string>
@@ -176,10 +188,14 @@
     <string name="pairing_unpair_button">I-unpair</string>
     <string name="pairing_teams_title">Mga Team</string>
     <string name="pairing_unpaired_title">Walang Partner</string>
+    <string name="pairing_error_pair_failed">Hindi na-pair. Subukan ulit.</string>
+    <string name="pairing_error_unpair_failed">Hindi na-unpair. Subukan ulit.</string>
 
     <!-- Bracket -->
     <string name="bracket_setup_title">Bracket Setup</string>
     <string name="bracket_seed_reorder_hint">I-reorder ang seeding bago i-generate ang bracket.</string>
+    <string name="bracket_seed_move_up">Itaas ang seed</string>
+    <string name="bracket_seed_move_down">Ibaba ang seed</string>
     <string name="bracket_generate_button">I-generate ang Bracket</string>
     <string name="bracket_regenerate_button">I-regenerate ang Bracket</string>
     <string name="bracket_locked_note">Naka-lock na ang bracket. Hindi na puwedeng baguhin ang seeding.</string>
@@ -227,6 +243,8 @@
     <string name="results_publish_hint">Kapag naka-publish, makikita na ng mga manlalaro ang resulta.</string>
     <string name="results_no_matches">Wala pang bracket o laban sa division na ito.</string>
     <string name="results_certificates_button">Mga Certificate</string>
+    <string name="results_error_load_failed">Hindi ma-load ang resulta.</string>
+    <string name="results_error_publish_failed">Hindi na-update ang publish status.</string>
 
     <!-- Certificates (spec §5.9) -->
     <string name="certificates_title">Mga Certificate</string>
@@ -235,6 +253,7 @@
     <string name="certificates_generating">Gine-generate…</string>
     <string name="certificates_share_title">I-share ang Certificate</string>
     <string name="certificates_error">Hindi na-generate ang certificate. Subukan ulit.</string>
+    <string name="certificates_load_error">Hindi ma-load. Subukan ulit.</string>
     <string name="certificate_kind_champion">CHAMPION</string>
     <string name="certificate_kind_runner_up">RUNNER-UP</string>
     <string name="certificate_kind_participation">CERTIFICATE OF PARTICIPATION</string>

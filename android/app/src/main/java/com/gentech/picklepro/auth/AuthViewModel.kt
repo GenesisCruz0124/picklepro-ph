@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.gentech.picklepro.R
 import com.gentech.picklepro.data.preferences.UserPreferencesStore
 import com.gentech.picklepro.data.repository.AuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,6 +29,7 @@ data class AuthUiState(
 )
 
 class AuthViewModel(
+    private val context: Context,
     private val authRepository: AuthRepository,
     private val userPreferencesStore: UserPreferencesStore,
 ) : ViewModel() {
@@ -61,11 +63,11 @@ class AuthViewModel(
     fun submit() {
         val state = _uiState.value
         if (state.email.isBlank() || state.password.isBlank()) {
-            _uiState.update { it.copy(errorMessage = "Kailangan ng email at password.") }
+            _uiState.update { it.copy(errorMessage = context.getString(R.string.auth_error_missing_credentials)) }
             return
         }
         if (state.mode == AuthMode.SIGNUP && state.name.isBlank()) {
-            _uiState.update { it.copy(errorMessage = "Kailangan ng pangalan.") }
+            _uiState.update { it.copy(errorMessage = context.getString(R.string.auth_error_missing_name)) }
             return
         }
 
@@ -99,15 +101,15 @@ class AuthViewModel(
         val message = t.message.orEmpty()
         return when {
             message.contains("Invalid login credentials", ignoreCase = true) ->
-                "Mali ang email o password."
+                context.getString(R.string.auth_error_invalid_credentials)
             message.contains("already registered", ignoreCase = true) ||
                 message.contains("already exists", ignoreCase = true) ->
-                "Ginagamit na ang email na ito."
+                context.getString(R.string.auth_error_email_in_use)
             message.contains("Password should be", ignoreCase = true) ->
-                "Kailangan ng at least 6 characters ang password."
+                context.getString(R.string.auth_error_weak_password)
             message.contains("network", ignoreCase = true) ->
-                "Walang connection. Subukan ulit."
-            else -> "May problema. Subukan ulit."
+                context.getString(R.string.common_error_network)
+            else -> context.getString(R.string.common_error_generic)
         }
     }
 }
@@ -116,6 +118,7 @@ class AuthViewModelFactory(private val appContext: Context) : ViewModelProvider.
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         return AuthViewModel(
+            context = appContext,
             authRepository = AuthRepository(appContext),
             userPreferencesStore = UserPreferencesStore(appContext),
         ) as T
