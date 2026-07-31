@@ -53,6 +53,9 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item {
+            Text(stringResource(R.string.profile_title), style = MaterialTheme.typography.headlineMedium)
+        }
+        item {
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
                 if (profile?.photoUrl != null) {
                     AsyncImage(

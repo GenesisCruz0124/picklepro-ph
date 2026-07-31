@@ -61,11 +61,22 @@ fun LiveScorerScreen(
     }
 
     // ScoreEngine.replay is pure/cheap; re-derive straight from the observed match on every recomposition.
+    val fullLog = decodeEventLog(match.pointLogJson)
     val gameState = ScoreEngine.replay(
-        decodeEventLog(match.pointLogJson).filter { it.first == match.currentGameNumber }.map { it.second },
+        fullLog.filter { it.first == match.currentGameNumber }.map { it.second },
         config.mode,
         config.isDoubles,
     )
+    // Winners of already-completed games this match, needed to tell a game point
+    // that would also clinch the match ("Match Point") from an ordinary one.
+    val gameWinners = (1 until match.currentGameNumber).mapNotNull { gameNumber ->
+        val finalState = ScoreEngine.replay(
+            fullLog.filter { it.first == gameNumber }.map { it.second },
+            config.mode,
+            config.isDoubles,
+        )
+        ScoreEngine.gameWinner(finalState, config.gameTo, config.winBy2)
+    }
 
     var timeoutTeam by remember { mutableStateOf<Team?>(null) }
     var timeoutSecondsLeft by remember { mutableStateOf(0) }
@@ -122,6 +133,9 @@ fun LiveScorerScreen(
                 score = gameState.scoreA,
                 isServing = gameState.servingTeam == Team.A,
                 isGamePoint = ScoreEngine.isGamePoint(gameState, Team.A, config.gameTo, config.winBy2),
+                isMatchPoint = ScoreEngine.isMatchPoint(
+                    gameState, Team.A, config.gameTo, config.winBy2, gameWinners, config.bestOf,
+                ),
                 canTapToScore = config.mode == ScoringMode.RALLY || gameState.servingTeam == Team.A,
                 courtSide = if (gameState.servingTeam == Team.A) ScoreEngine.serveSideHint(gameState) else null,
                 modifier = Modifier.weight(1f),
@@ -134,6 +148,9 @@ fun LiveScorerScreen(
                 score = gameState.scoreB,
                 isServing = gameState.servingTeam == Team.B,
                 isGamePoint = ScoreEngine.isGamePoint(gameState, Team.B, config.gameTo, config.winBy2),
+                isMatchPoint = ScoreEngine.isMatchPoint(
+                    gameState, Team.B, config.gameTo, config.winBy2, gameWinners, config.bestOf,
+                ),
                 canTapToScore = config.mode == ScoringMode.RALLY || gameState.servingTeam == Team.B,
                 courtSide = if (gameState.servingTeam == Team.B) ScoreEngine.serveSideHint(gameState) else null,
                 modifier = Modifier.weight(1f),
@@ -207,6 +224,7 @@ private fun TeamPanel(
     score: Int,
     isServing: Boolean,
     isGamePoint: Boolean,
+    isMatchPoint: Boolean,
     canTapToScore: Boolean,
     courtSide: CourtSide?,
     onTap: () -> Unit,
@@ -226,7 +244,9 @@ private fun TeamPanel(
             if (isServing) Text("●", color = MaterialTheme.colorScheme.primary)
             Text(name, style = MaterialTheme.typography.titleLarge)
             Text(score.toString(), style = MaterialTheme.typography.displayLarge)
-            if (isGamePoint) {
+            if (isMatchPoint) {
+                Text(stringResource(R.string.scorer_match_point), color = MaterialTheme.colorScheme.error)
+            } else if (isGamePoint) {
                 Text(stringResource(R.string.scorer_game_point), color = MaterialTheme.colorScheme.error)
             }
             courtSide?.let {
