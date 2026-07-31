@@ -21,6 +21,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import com.gentech.picklepro.R
 import com.gentech.picklepro.core.designsystem.PickleProTopBar
+import kotlinx.coroutines.delay
 
 @Composable
 fun BecomeOrganizerScreen(
@@ -31,7 +32,11 @@ fun BecomeOrganizerScreen(
     val state by viewModel.uiState.collectAsState()
 
     LaunchedEffect(state.success) {
-        if (state.success) onRedeemed()
+        if (state.success) {
+            // Brief pause so the success message is actually visible before navigating away.
+            delay(900)
+            onRedeemed()
+        }
     }
 
     Scaffold(
@@ -62,10 +67,13 @@ fun BecomeOrganizerScreen(
             )
 
             state.errorMessage?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+            if (state.success) {
+                Text(stringResource(R.string.organizer_redeem_success), color = MaterialTheme.colorScheme.primary)
+            }
 
             Button(
                 onClick = viewModel::submit,
-                enabled = !state.isLoading,
+                enabled = !state.isLoading && !state.success,
                 modifier = Modifier.fillMaxWidth(),
             ) {
                 if (state.isLoading) {

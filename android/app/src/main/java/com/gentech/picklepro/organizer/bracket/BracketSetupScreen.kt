@@ -1,6 +1,7 @@
 package com.gentech.picklepro.organizer.bracket
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,6 +47,38 @@ fun BracketSetupScreen(
 
     Scaffold(
         topBar = { PickleProTopBar(stringResource(R.string.bracket_setup_title), onBack) },
+        bottomBar = {
+            // Pinned so the primary action (and feedback from tapping it) stays visible
+            // regardless of how many seed rows scroll above it — a bracket can easily
+            // have 32+ entrants, burying a bottom-of-list button otherwise.
+            if (state.canRegenerate) {
+                Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    when (state.message) {
+                        "not_enough" -> Text(stringResource(R.string.bracket_not_enough_entrants), color = MaterialTheme.colorScheme.error)
+                        "has_results" -> Text(stringResource(R.string.bracket_regenerate_blocked_note), color = MaterialTheme.colorScheme.error)
+                    }
+                    Button(
+                        onClick = viewModel::generate,
+                        enabled = !state.isGenerating && state.seeds.size >= 2,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        if (state.isGenerating) {
+                            CircularProgressIndicator(modifier = Modifier.padding(2.dp), strokeWidth = 2.dp)
+                        } else {
+                            Text(
+                                stringResource(
+                                    if (state.division?.locked == true) {
+                                        R.string.bracket_regenerate_button
+                                    } else {
+                                        R.string.bracket_generate_button
+                                    },
+                                ),
+                            )
+                        }
+                    }
+                }
+            }
+        },
     ) { padding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(padding),
@@ -94,35 +127,6 @@ fun BracketSetupScreen(
                         onMoveUp = { viewModel.moveUp(index) },
                         onMoveDown = { viewModel.moveDown(index) },
                     )
-                }
-            }
-
-            when (state.message) {
-                "not_enough" -> item { Text(stringResource(R.string.bracket_not_enough_entrants), color = MaterialTheme.colorScheme.error) }
-                "has_results" -> item { Text(stringResource(R.string.bracket_regenerate_blocked_note), color = MaterialTheme.colorScheme.error) }
-            }
-
-            if (state.canRegenerate) {
-                item {
-                    Button(
-                        onClick = viewModel::generate,
-                        enabled = !state.isGenerating && state.seeds.size >= 2,
-                        modifier = Modifier.fillMaxWidth(),
-                    ) {
-                        if (state.isGenerating) {
-                            CircularProgressIndicator(modifier = Modifier.padding(2.dp), strokeWidth = 2.dp)
-                        } else {
-                            Text(
-                                stringResource(
-                                    if (state.division?.locked == true) {
-                                        R.string.bracket_regenerate_button
-                                    } else {
-                                        R.string.bracket_generate_button
-                                    },
-                                ),
-                            )
-                        }
-                    }
                 }
             }
         }
