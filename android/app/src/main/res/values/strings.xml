@@ -3,41 +3,41 @@
     <string name="app_name">PicklePro PH</string>
 
     <!-- Common -->
-    <string name="common_back">Bumalik</string>
-    <string name="common_loading">Naglo-load…</string>
-    <string name="common_retry">Ulitin</string>
-    <string name="common_cancel">Kanselahin</string>
-    <string name="common_save">I-save</string>
-    <string name="common_edit">I-edit</string>
-    <string name="common_error_generic">May problema. Subukan ulit.</string>
-    <string name="common_error_network">Walang connection. Subukan ulit.</string>
-    <string name="common_error_save_failed">Hindi na-save. Subukan ulit.</string>
+    <string name="common_back">Back</string>
+    <string name="common_loading">Loading…</string>
+    <string name="common_retry">Retry</string>
+    <string name="common_cancel">Cancel</string>
+    <string name="common_save">Save</string>
+    <string name="common_edit">Edit</string>
+    <string name="common_error_generic">Something went wrong. Please try again.</string>
+    <string name="common_error_network">No connection. Please try again.</string>
+    <string name="common_error_save_failed">Couldn\'t save. Please try again.</string>
 
     <!-- Navigation -->
     <string name="nav_profile">Profile</string>
-    <string name="nav_qr">QR Ko</string>
-    <string name="nav_tournaments">Mga Tournament</string>
+    <string name="nav_qr">My QR</string>
+    <string name="nav_tournaments">Tournaments</string>
     <string name="nav_organizer">Organizer</string>
 
     <!-- Auth -->
-    <string name="auth_login_title">Mag-sign In</string>
-    <string name="auth_signup_title">Gumawa ng Account</string>
-    <string name="auth_full_name">Buong Pangalan</string>
+    <string name="auth_login_title">Sign In</string>
+    <string name="auth_signup_title">Create Account</string>
+    <string name="auth_full_name">Full Name</string>
     <string name="auth_email">Email</string>
     <string name="auth_password">Password</string>
-    <string name="auth_declared_rating_label">Antas ng Laro Mo (Starting Rating)</string>
-    <string name="auth_declared_rating_hint">2.0–8.0, provisional lang ito hanggang malaman ang totoong level mo sa mga laban</string>
-    <string name="auth_event_preferences_label">Gusto Mong I-focus</string>
+    <string name="auth_declared_rating_label">Your Skill Level (Starting Rating)</string>
+    <string name="auth_declared_rating_hint">2.0–8.0, this is just provisional until your real level shows in match results</string>
+    <string name="auth_event_preferences_label">What You Want to Focus On</string>
     <string name="auth_login_button">Sign In</string>
-    <string name="auth_signup_button">Mag-sign Up</string>
-    <string name="auth_switch_to_signup">Wala ka pang account? Mag-sign Up</string>
-    <string name="auth_switch_to_login">May account ka na? Mag-sign In</string>
-    <string name="auth_error_invalid_credentials">Mali ang email o password.</string>
-    <string name="auth_error_email_in_use">Ginagamit na ang email na ito.</string>
-    <string name="auth_error_weak_password">Kailangan ng at least 6 characters ang password.</string>
-    <string name="auth_error_missing_credentials">Kailangan ng email at password.</string>
-    <string name="auth_error_missing_name">Kailangan ng pangalan.</string>
-    <string name="auth_check_email">I-check ang email mo para i-confirm ang account, tapos mag-sign in.</string>
+    <string name="auth_signup_button">Sign Up</string>
+    <string name="auth_switch_to_signup">Don\'t have an account? Sign Up</string>
+    <string name="auth_switch_to_login">Already have an account? Sign In</string>
+    <string name="auth_error_invalid_credentials">Incorrect email or password.</string>
+    <string name="auth_error_email_in_use">This email is already in use.</string>
+    <string name="auth_error_weak_password">Password must be at least 6 characters.</string>
+    <string name="auth_error_missing_credentials">Email and password are required.</string>
+    <string name="auth_error_missing_name">Name is required.</string>
+    <string name="auth_check_email">Check your email to confirm your account, then sign in.</string>
 
     <!-- Event types (technical/config terms, kept in English per spec §8) -->
     <string name="event_type_singles">Singles</string>
@@ -55,83 +55,83 @@
 
     <!-- Profile -->
     <string name="profile_title">Profile</string>
-    <string name="profile_edit">I-edit ang Profile</string>
-    <string name="profile_location_hint">Lokasyon</string>
-    <string name="profile_rating_chart_title">Kasaysayan ng Rating</string>
-    <string name="profile_match_history_title">Kasaysayan ng Laban</string>
-    <string name="profile_match_history_empty">Wala ka pang laban. Mag-join na sa tournament!</string>
+    <string name="profile_edit">Edit Profile</string>
+    <string name="profile_location_hint">Location</string>
+    <string name="profile_rating_chart_title">Rating History</string>
+    <string name="profile_match_history_title">Match History</string>
+    <string name="profile_match_history_empty">No matches yet. Join a tournament!</string>
     <string name="profile_dupr_verified_badge">DUPR Verified</string>
-    <string name="profile_win">Panalo</string>
-    <string name="profile_loss">Talo</string>
-    <string name="profile_become_organizer_cta">Maging Organizer</string>
+    <string name="profile_win">Win</string>
+    <string name="profile_loss">Loss</string>
+    <string name="profile_become_organizer_cta">Become an Organizer</string>
 
     <!-- My QR -->
-    <string name="qr_title">QR Ko</string>
-    <string name="qr_subtitle">Ipakita ito sa organizer para mag-register sa tournament</string>
-    <string name="qr_brightness_toggle_on">I-max ang Brightness</string>
-    <string name="qr_brightness_toggle_off">Ibalik ang Normal na Brightness</string>
-    <string name="qr_short_code_label">O sabihin ang code:</string>
-    <string name="qr_offline_note">Gumagana ito kahit walang internet</string>
+    <string name="qr_title">My QR</string>
+    <string name="qr_subtitle">Show this to the organizer to register for a tournament</string>
+    <string name="qr_brightness_toggle_on">Max Brightness</string>
+    <string name="qr_brightness_toggle_off">Restore Normal Brightness</string>
+    <string name="qr_short_code_label">Or say the code:</string>
+    <string name="qr_offline_note">Works even without internet</string>
 
     <!-- Organizer: activation -->
-    <string name="organizer_become_title">Maging Organizer</string>
-    <string name="organizer_become_subtitle">I-enter ang activation code galing kay Gen para makapag-create ng tournament.</string>
+    <string name="organizer_become_title">Become an Organizer</string>
+    <string name="organizer_become_subtitle">Enter the activation code from Gen to start creating tournaments.</string>
     <string name="organizer_code_label">Activation Code</string>
-    <string name="organizer_redeem_button">I-redeem</string>
-    <string name="organizer_redeem_success">Na-redeem! Organizer ka na.</string>
-    <string name="organizer_error_code_not_found">Hindi mahanap ang code na iyan.</string>
-    <string name="organizer_error_code_redeemed">Na-redeem na ang code na ito.</string>
-    <string name="organizer_error_code_revoked">Na-revoke na ang code na ito.</string>
-    <string name="organizer_error_account_suspended">Suspended ang account mo. I-contact si admin.</string>
-    <string name="organizer_error_missing_code">Kailangan ng code.</string>
+    <string name="organizer_redeem_button">Redeem</string>
+    <string name="organizer_redeem_success">Redeemed! You\'re now an organizer.</string>
+    <string name="organizer_error_code_not_found">That code couldn\'t be found.</string>
+    <string name="organizer_error_code_redeemed">This code has already been redeemed.</string>
+    <string name="organizer_error_code_revoked">This code has been revoked.</string>
+    <string name="organizer_error_account_suspended">Your account is suspended. Please contact the admin.</string>
+    <string name="organizer_error_missing_code">Code is required.</string>
 
     <!-- Organizer: wallet -->
     <string name="organizer_wallet_title">Wallet</string>
     <string name="organizer_wallet_credits_label">Tournament Credits</string>
-    <string name="organizer_wallet_credits_hint">Gumagamit ng 1 credit ang bawat bagong tournament.</string>
-    <string name="organizer_wallet_redeem_another">May Bagong Code</string>
-    <string name="organizer_wallet_buy_more">Bumili ng Credits</string>
+    <string name="organizer_wallet_credits_hint">Each new tournament uses 1 credit.</string>
+    <string name="organizer_wallet_redeem_another">Redeem Another Code</string>
+    <string name="organizer_wallet_buy_more">Buy More Credits</string>
 
     <!-- Organizer: dashboard -->
     <string name="organizer_dashboard_title">Organizer Dashboard</string>
-    <string name="organizer_dashboard_active_tournaments">Aktibong Tournament</string>
-    <string name="organizer_dashboard_total_players">Naka-register na Manlalaro</string>
-    <string name="organizer_dashboard_matches_today">Laban Ngayon</string>
-    <string name="organizer_dashboard_new_tournament">Bagong Tournament</string>
-    <string name="organizer_dashboard_empty">Wala ka pang tournament. Gumawa na!</string>
+    <string name="organizer_dashboard_active_tournaments">Active Tournaments</string>
+    <string name="organizer_dashboard_total_players">Registered Players</string>
+    <string name="organizer_dashboard_matches_today">Matches Today</string>
+    <string name="organizer_dashboard_new_tournament">New Tournament</string>
+    <string name="organizer_dashboard_empty">No tournaments yet. Create one!</string>
 
     <!-- Organizer: tournament setup -->
-    <string name="tournament_setup_title_new">Bagong Tournament</string>
-    <string name="tournament_setup_title_edit">I-edit ang Tournament</string>
-    <string name="tournament_name_label">Pangalan ng Tournament</string>
+    <string name="tournament_setup_title_new">New Tournament</string>
+    <string name="tournament_setup_title_edit">Edit Tournament</string>
+    <string name="tournament_name_label">Tournament Name</string>
     <string name="tournament_venue_label">Venue</string>
-    <string name="tournament_description_label">Deskripsyon</string>
+    <string name="tournament_description_label">Description</string>
     <string name="tournament_entry_fee_label">Entry Fee Note</string>
-    <string name="tournament_court_count_label">Bilang ng Courts</string>
-    <string name="tournament_start_date_label">Simula (YYYY-MM-DD)</string>
-    <string name="tournament_end_date_label">Katapusan (YYYY-MM-DD)</string>
-    <string name="tournament_logo_upload">I-upload ang Logo</string>
+    <string name="tournament_court_count_label">Number of Courts</string>
+    <string name="tournament_start_date_label">Start Date (YYYY-MM-DD)</string>
+    <string name="tournament_end_date_label">End Date (YYYY-MM-DD)</string>
+    <string name="tournament_logo_upload">Upload Logo</string>
     <string name="tournament_status_label">Status</string>
     <string name="tournament_status_draft">Draft</string>
     <string name="tournament_status_registration">Registration</string>
     <string name="tournament_status_ongoing">Ongoing</string>
     <string name="tournament_status_finished">Finished</string>
-    <string name="tournament_create_button">I-create ang Tournament</string>
-    <string name="tournament_no_credits">Wala kang tournament credit. Pumunta sa Wallet.</string>
-    <string name="tournament_divisions_button">Mga Division</string>
-    <string name="tournament_error_missing_name">Kailangan ng pangalan ng tournament.</string>
-    <string name="tournament_error_credit_conflict">May kasabay na request. Subukan ulit.</string>
-    <string name="tournament_error_load_failed">Hindi ma-load ang tournament.</string>
-    <string name="tournament_error_status_update_failed">Hindi na-update ang status.</string>
-    <string name="tournament_error_logo_upload_failed">Hindi na-upload ang logo.</string>
+    <string name="tournament_create_button">Create Tournament</string>
+    <string name="tournament_no_credits">You don\'t have a tournament credit. Go to Wallet.</string>
+    <string name="tournament_divisions_button">Divisions</string>
+    <string name="tournament_error_missing_name">Tournament name is required.</string>
+    <string name="tournament_error_credit_conflict">There\'s a conflicting request in progress. Please try again.</string>
+    <string name="tournament_error_load_failed">Couldn\'t load the tournament.</string>
+    <string name="tournament_error_status_update_failed">Couldn\'t update the status.</string>
+    <string name="tournament_error_logo_upload_failed">Couldn\'t upload the logo.</string>
 
     <!-- Organizer: division setup -->
-    <string name="division_setup_title">Mga Division</string>
-    <string name="division_add_button">Magdagdag ng Division</string>
-    <string name="division_name_label">Pangalan ng Division</string>
+    <string name="division_setup_title">Divisions</string>
+    <string name="division_add_button">Add Division</string>
+    <string name="division_name_label">Division Name</string>
     <string name="division_event_type_label">Event Type</string>
     <string name="division_skill_gate_label">Skill Gate</string>
-    <string name="division_skill_gate_open">Open (walang gate)</string>
+    <string name="division_skill_gate_open">Open (no gate)</string>
     <string name="division_max_rating_label">Max Rating</string>
     <string name="division_age_bracket_label">Age Bracket (optional)</string>
     <string name="division_age_bracket_open">Open Age</string>
@@ -145,63 +145,63 @@
     <string name="division_scoring_mode_label">Scoring Mode</string>
     <string name="division_scoring_mode_sideout">Traditional Side-Out</string>
     <string name="division_scoring_mode_rally">Rally Scoring</string>
-    <string name="division_bronze_match_label">May Bronze Match</string>
-    <string name="division_save_button">I-save ang Division</string>
-    <string name="division_delete_button">Alisin</string>
-    <string name="division_locked_note">Naka-lock na ang division na ito (may bracket na).</string>
-    <string name="division_empty">Wala pang division. Magdagdag na.</string>
-    <string name="division_manage_registrations">Mga Registrasyon</string>
+    <string name="division_bronze_match_label">Has Bronze Match</string>
+    <string name="division_save_button">Save Division</string>
+    <string name="division_delete_button">Remove</string>
+    <string name="division_locked_note">This division is locked (bracket already exists).</string>
+    <string name="division_empty">No divisions yet. Add one.</string>
+    <string name="division_manage_registrations">Registrations</string>
     <string name="division_manage_bracket">Bracket</string>
-    <string name="division_manage_results">Resulta</string>
-    <string name="division_error_missing_name">Kailangan ng pangalan ng division.</string>
-    <string name="division_error_delete_failed">Hindi na-alis. Subukan ulit.</string>
+    <string name="division_manage_results">Results</string>
+    <string name="division_error_missing_name">Division name is required.</string>
+    <string name="division_error_delete_failed">Couldn\'t remove it. Please try again.</string>
 
     <!-- Registration -->
-    <string name="registration_qr_scan_title">I-scan ang QR</string>
-    <string name="registration_camera_permission_needed">Kailangan ng camera permission para mag-scan.</string>
-    <string name="registration_camera_permission_grant">Payagan ang Camera</string>
-    <string name="registration_scan_registered">Na-register si %1$s!</string>
-    <string name="registration_scan_checked_in">Na-check-in si %1$s!</string>
-    <string name="registration_scan_rejected_gate">Hindi pasok si %1$s sa skill gate ng division na ito.</string>
-    <string name="registration_scan_rejected_slots">Puno na ang division na ito.</string>
-    <string name="registration_scan_another">Mag-scan Ulit</string>
-    <string name="registration_manual_add_title">Manual na Idagdag</string>
-    <string name="registration_manual_add_name_label">Pangalan</string>
+    <string name="registration_qr_scan_title">Scan QR</string>
+    <string name="registration_camera_permission_needed">Camera permission is needed to scan.</string>
+    <string name="registration_camera_permission_grant">Allow Camera</string>
+    <string name="registration_scan_registered">%1$s registered!</string>
+    <string name="registration_scan_checked_in">%1$s checked in!</string>
+    <string name="registration_scan_rejected_gate">%1$s doesn\'t meet the skill gate for this division.</string>
+    <string name="registration_scan_rejected_slots">This division is full.</string>
+    <string name="registration_scan_another">Scan Again</string>
+    <string name="registration_manual_add_title">Add Manually</string>
+    <string name="registration_manual_add_name_label">Name</string>
     <string name="registration_manual_add_rating_label">Declared Rating — %.1f</string>
-    <string name="registration_manual_add_button">Idagdag</string>
-    <string name="registration_list_title">Mga Naka-register</string>
-    <string name="registration_search_hint">Maghanap ng pangalan</string>
+    <string name="registration_manual_add_button">Add</string>
+    <string name="registration_list_title">Registered Players</string>
+    <string name="registration_search_hint">Search by name</string>
     <string name="registration_check_in_label">Check-in</string>
-    <string name="registration_unregister_button">Alisin</string>
-    <string name="registration_scan_qr_button">I-scan ang QR</string>
-    <string name="registration_manual_add_nav_button">Manual na Idagdag</string>
-    <string name="registration_pairing_button">Pagsamahin (Doubles)</string>
-    <string name="registration_empty">Wala pang naka-register.</string>
-    <string name="registration_unpaired_label">Walang Partner</string>
+    <string name="registration_unregister_button">Remove</string>
+    <string name="registration_scan_qr_button">Scan QR</string>
+    <string name="registration_manual_add_nav_button">Add Manually</string>
+    <string name="registration_pairing_button">Pair Up (Doubles)</string>
+    <string name="registration_empty">No one registered yet.</string>
+    <string name="registration_unpaired_label">No Partner</string>
     <string name="registration_shell_badge">Shell</string>
-    <string name="registration_scan_player_not_found">Hindi mahanap ang manlalaro.</string>
+    <string name="registration_scan_player_not_found">Player not found.</string>
 
     <!-- Pairing -->
-    <string name="pairing_title">Pagsamahin ang Doubles</string>
-    <string name="pairing_select_two">Pumili ng dalawang manlalaro na walang partner pa.</string>
-    <string name="pairing_pair_button">I-pair</string>
-    <string name="pairing_unpair_button">I-unpair</string>
-    <string name="pairing_teams_title">Mga Team</string>
-    <string name="pairing_unpaired_title">Walang Partner</string>
-    <string name="pairing_error_pair_failed">Hindi na-pair. Subukan ulit.</string>
-    <string name="pairing_error_unpair_failed">Hindi na-unpair. Subukan ulit.</string>
+    <string name="pairing_title">Pair Up Doubles</string>
+    <string name="pairing_select_two">Select two players who don\'t have a partner yet.</string>
+    <string name="pairing_pair_button">Pair</string>
+    <string name="pairing_unpair_button">Unpair</string>
+    <string name="pairing_teams_title">Teams</string>
+    <string name="pairing_unpaired_title">No Partner</string>
+    <string name="pairing_error_pair_failed">Couldn\'t pair them. Please try again.</string>
+    <string name="pairing_error_unpair_failed">Couldn\'t unpair them. Please try again.</string>
 
     <!-- Bracket -->
     <string name="bracket_setup_title">Bracket Setup</string>
-    <string name="bracket_seed_reorder_hint">I-reorder ang seeding bago i-generate ang bracket.</string>
-    <string name="bracket_seed_move_up">Itaas ang seed</string>
-    <string name="bracket_seed_move_down">Ibaba ang seed</string>
-    <string name="bracket_generate_button">I-generate ang Bracket</string>
-    <string name="bracket_regenerate_button">I-regenerate ang Bracket</string>
-    <string name="bracket_locked_note">Naka-lock na ang bracket. Hindi na puwedeng baguhin ang seeding.</string>
-    <string name="bracket_regenerate_blocked_note">May resulta na — hindi na puwedeng i-regenerate.</string>
-    <string name="bracket_not_enough_entrants">Kailangan ng at least 2 entrant para makagawa ng bracket.</string>
-    <string name="bracket_unpaired_warning">May mga manlalaro na walang partner — hindi sila isasama sa bracket.</string>
+    <string name="bracket_seed_reorder_hint">Reorder the seeding before generating the bracket.</string>
+    <string name="bracket_seed_move_up">Move seed up</string>
+    <string name="bracket_seed_move_down">Move seed down</string>
+    <string name="bracket_generate_button">Generate Bracket</string>
+    <string name="bracket_regenerate_button">Regenerate Bracket</string>
+    <string name="bracket_locked_note">This bracket is locked. Seeding can no longer be changed.</string>
+    <string name="bracket_regenerate_blocked_note">Results already exist — can no longer regenerate.</string>
+    <string name="bracket_not_enough_entrants">At least 2 entrants are needed to create a bracket.</string>
+    <string name="bracket_unpaired_warning">Some players don\'t have a partner — they won\'t be included in the bracket.</string>
     <string name="bracket_view_title">Bracket</string>
     <string name="bracket_round_label">Round %1$d</string>
     <string name="bracket_bye_label">BYE</string>
@@ -209,65 +209,65 @@
     <string name="bracket_standings_wins">W</string>
     <string name="bracket_standings_losses">L</string>
     <string name="bracket_standings_point_diff">+/-</string>
-    <string name="bracket_view_button">Tingnan ang Bracket</string>
+    <string name="bracket_view_button">View Bracket</string>
 
     <!-- Live Scorer -->
     <string name="scorer_side_out_button">SIDE OUT</string>
     <string name="scorer_undo_button">UNDO</string>
     <string name="scorer_timeout_button">Timeout</string>
     <string name="scorer_timeout_countdown">Timeout — %1$d s</string>
-    <string name="scorer_end_swap_reminder">Oras na para magpalit ng gilid!</string>
+    <string name="scorer_end_swap_reminder">Time to switch sides!</string>
     <string name="scorer_game_point">Game Point</string>
     <string name="scorer_match_point">Match Point</string>
-    <string name="scorer_match_complete_title">Tapos na ang Match!</string>
-    <string name="scorer_match_complete_message">Panalo si %1$s!</string>
+    <string name="scorer_match_complete_title">Match Complete!</string>
+    <string name="scorer_match_complete_message">%1$s wins!</string>
     <string name="scorer_ok_button">OK</string>
-    <string name="scorer_court_right">Kanan</string>
-    <string name="scorer_court_left">Kaliwa</string>
+    <string name="scorer_court_right">Right</string>
+    <string name="scorer_court_left">Left</string>
     <string name="scorer_game_label">Game %1$d</string>
-    <string name="scorer_open_scoreboard_button">Buksan ang Scoreboard</string>
+    <string name="scorer_open_scoreboard_button">Open Scoreboard</string>
 
-    <string name="match_status_pending">Hindi Pa Nilalaro</string>
-    <string name="match_status_live">Live Ngayon</string>
-    <string name="match_status_done">Tapos Na</string>
+    <string name="match_status_pending">Not Yet Played</string>
+    <string name="match_status_live">Live Now</string>
+    <string name="match_status_done">Finished</string>
     <string name="match_status_walkover">Walkover</string>
-    <string name="bracket_match_not_ready">Hintayin muna ang mga naunang laban</string>
+    <string name="bracket_match_not_ready">Waiting on earlier matches</string>
 
     <!-- Results / tabulation (spec §5.8) -->
-    <string name="results_title">Resulta</string>
+    <string name="results_title">Results</string>
     <string name="results_champion">Champion</string>
     <string name="results_runner_up">Runner-Up</string>
     <string name="results_third_place">Third Place</string>
-    <string name="results_incomplete_note">May mga laban pa na hindi tapos — pansamantala pa ang resulta.</string>
-    <string name="results_publish_label">I-publish ang Resulta</string>
-    <string name="results_publish_hint">Kapag naka-publish, makikita na ng mga manlalaro ang resulta.</string>
-    <string name="results_no_matches">Wala pang bracket o laban sa division na ito.</string>
-    <string name="results_certificates_button">Mga Certificate</string>
-    <string name="results_error_load_failed">Hindi ma-load ang resulta.</string>
-    <string name="results_error_publish_failed">Hindi na-update ang publish status.</string>
+    <string name="results_incomplete_note">Some matches are still unfinished — results are provisional for now.</string>
+    <string name="results_publish_label">Publish Results</string>
+    <string name="results_publish_hint">Once published, players will be able to see the results.</string>
+    <string name="results_no_matches">No bracket or matches yet for this division.</string>
+    <string name="results_certificates_button">Certificates</string>
+    <string name="results_error_load_failed">Couldn\'t load the results.</string>
+    <string name="results_error_publish_failed">Couldn\'t update the publish status.</string>
 
     <!-- Certificates (spec §5.9) -->
-    <string name="certificates_title">Mga Certificate</string>
-    <string name="certificates_hint">I-tap para i-generate at i-share ang PDF certificate.</string>
+    <string name="certificates_title">Certificates</string>
+    <string name="certificates_hint">Tap to generate and share the PDF certificate.</string>
     <string name="certificates_participation_section">Participation</string>
-    <string name="certificates_generating">Gine-generate…</string>
-    <string name="certificates_share_title">I-share ang Certificate</string>
-    <string name="certificates_error">Hindi na-generate ang certificate. Subukan ulit.</string>
-    <string name="certificates_load_error">Hindi ma-load. Subukan ulit.</string>
+    <string name="certificates_generating">Generating…</string>
+    <string name="certificates_share_title">Share Certificate</string>
+    <string name="certificates_error">Couldn\'t generate the certificate. Please try again.</string>
+    <string name="certificates_load_error">Couldn\'t load. Please try again.</string>
     <string name="certificate_kind_champion">CHAMPION</string>
     <string name="certificate_kind_runner_up">RUNNER-UP</string>
     <string name="certificate_kind_participation">CERTIFICATE OF PARTICIPATION</string>
-    <string name="certificate_awarded_to">Iginagawad kay</string>
-    <string name="certificate_organized_by">Inorganisa ni</string>
+    <string name="certificate_awarded_to">Awarded to</string>
+    <string name="certificate_organized_by">Organized by</string>
 
     <!-- Sync status (spec §5.10) -->
-    <string name="sync_pending_ops">%1$d resulta ang hinihintay ma-sync — pending pa ang rating updates.</string>
+    <string name="sync_pending_ops">%1$d result(s) waiting to sync — rating updates are pending.</string>
 
     <!-- Player: tournaments (spec §4.4) -->
-    <string name="tournaments_title">Mga Tournament</string>
-    <string name="tournaments_search_hint">Maghanap ng tournament o lugar</string>
-    <string name="tournaments_empty">Walang tournament na makita.</string>
+    <string name="tournaments_title">Tournaments</string>
+    <string name="tournaments_search_hint">Search by tournament or location</string>
+    <string name="tournaments_empty">No tournaments found.</string>
     <string name="player_tournament_organizer_label">Organizer</string>
-    <string name="player_tournament_divisions_title">Mga Division</string>
-    <string name="player_division_registered">%1$s naka-register</string>
+    <string name="player_tournament_divisions_title">Divisions</string>
+    <string name="player_division_registered">%1$s registered</string>
 </resources>
