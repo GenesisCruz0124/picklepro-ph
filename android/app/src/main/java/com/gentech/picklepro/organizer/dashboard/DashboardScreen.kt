@@ -17,12 +17,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import com.gentech.picklepro.R
 import com.gentech.picklepro.data.remote.dto.TournamentDto
 import com.gentech.picklepro.organizer.common.tournamentStatusLabelRes
@@ -36,6 +41,20 @@ fun DashboardScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     val pendingOpCount by viewModel.pendingOpCount.collectAsState()
+
+    // Re-fetch whenever this screen comes back into view (e.g. after creating
+    // a tournament and navigating back) — the ViewModel only loads once in
+    // init, so without this, newly created tournaments stay invisible here
+    // until the app process restarts.
+    val currentViewModel by rememberUpdatedState(viewModel)
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) currentViewModel.refresh()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
